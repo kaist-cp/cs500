@@ -4,7 +4,7 @@
 ## Logistics
 
 - Instructor: [Jeehoon Kang](https://sf.snu.ac.kr/jeehoon.kang)
-- Teaching assistants: TBA
+- Teaching assistants: Jihoon Ko
 - Time & Place: Mon & Wed 09:00am-10:15am, Rm 403, Bldg E11
 - Office hour: TBA
 - Website: https://github.com/kaist-cp/cs500-2019s
@@ -12,6 +12,7 @@
 
 ## Announcements
 
+- 2019/02/27: The latest version of the textbook is provided (link below).
 - 2019/02/25: The course website is up!
 
 
@@ -80,12 +81,12 @@ This course assumes basic understanding of:
 - A few data structures and algorithms
 
 For example, if you already took courses on programming (e.g. CS101), calculus (MAS101 and MAS102),
-discrete mathematics (CS204), data structures (CS200), and algorithm (CS300), you are good to go.
+discrete mathematics (CS204), data structures (CS206), and algorithm (CS300), you are good to go.
 
 
 ## Textbook
 
-- [Algorithm Design: Parallel and Sequential](http://www.parallel-algorithms-book.com/), Umut
+- [Algorithm Design: Parallel and Sequential](https://sites.google.com/view/algorithms-book/), Umut
   A. Acar and Guy E. Blelloch.
 - TBA
 
@@ -94,8 +95,7 @@ discrete mathematics (CS204), data structures (CS200), and algorithm (CS300), yo
 
 - Attendance (including quiz): 10%
 - Homework: 20%
-- Midterm: 30%
-- Final: 40%
+- Midterm & final exam: 70%
 
 Please note that the grading scheme is subject to change a little bit.
 
