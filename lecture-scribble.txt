@@ -1,0 +1,149 @@
+## work & span
+
+- informal example: Fibonacci sequence
+    + motivate work & span
+
+- work (W): number of primitive operations
+    + "time complexity"
+    + (relation to time in sequential machines): coincides
+    + (relation to time in parallel machines): time = W/P in case of *perfect speedup*
+
+- span (S): |the longest dependency chain|
+    + time that would be taken given an infinite number of cores
+
+- intrinsic parallelism (P): W/S
+    + dependency matters for parallelism
+
+- W, S, P are all *abstract resources*
+
+- we'll mostly focus on "work-efficient" algorithms
+    + work-efficient: an algorithm A is work-efficient for a problem P if A's work is asymptotically the best for P.
+    + motivation: energy (~= work) is usually the most important measure.
+    + among work-efficient algorithms, try to minimize S
+
+- example: sequential & parallel pair (composition)
+
+- example: Fibonacci sequence
+    + W = O(2^n), Theta(Fib(n)) ~= Theta(1.6^n) (by some mathematical analysis)
+      S = O(n)
+    + (1 1
+       1 0) ^n times (1 1)^T
+      W = O(lg n)
+      S = O(lg n)
+
+
+
+
+# Asymptotics
+
+- motivation: ignore constant factors (effectively also ignoring lower-order terms)
+    + Q: how to precisely define "ignore ..."?
+
+- asymptotic dominance: f dominates g if exists c,n0 s.t. for all n>= 0, g(n) <= c f(n)
+    + e.g. n dominates (ln^k n).  proof: sufficient to prove that lim_(n->inf) (ln^k n)/n = 0
+    + pre-order
+    + equivalence class: Theta  (e.g. (n+1)^2 \in Theta(n^2))
+
+- O, Omega: upper & lower bound
+
+- notations: "f(n) = O(n)", "O(\lambda n. n+a)", "O(n*m)", ...
+
+- doesn't always reflect the real cost: insertion sort works better than merge sort for small inputs
+
+
+
+
+# language
+
+- Part II
+
+- Call-by-value is inherently parallel: in (e1 e2), e1 and e2 can be executed in parallel.
+  Call-by-need (Haskell) is not.
+
+- parallelism should be stated as ||
+
+- language-based cost model (p81, Section 10.2)
+
+p := x | (p, p) | ...
+
+e :=
+| x
+| v
+| lambda p. e
+| e e
+|
+| e op e
+| e, e
+| e || e
+| if e then e else e
+| let (p = e)+ in e end
+| (e)
+| case e (p => e)+
+
+
+
+
+# specification
+
+- functional spec: what an algorithm should do, not how
+    + e.g. comparison sort
+- cost spec: how much resource an algorithm takes
+    + e.g. W = O(n lg n), S = O(lg^2 n)
+    + e.g. W = O(n lg n)
+- problem: functional/cost spec
+    + e.g. implement comparison sort w/ ...
+- solution: implementation that solves the problem
+    + insertion sort
+    + (parallel) merge sort
+- motivation: modularity
+
+- abstract data types (ADT): set of interfacing functions
+    + functional/cost spec for those functions
+      e.g. priority queue
+           new: O(1), O(1)
+           push: O(lg n), O(lg n)
+           pop: O(lg n), O(lg n)
+    + ADT problem, implement data structures
+
+
+
+
+
+# genome sequencing problem
+
++ sequence of "AGCT"
++ human genome is large: 3 billions
++ fragments
++ shotgun method: duplicate, randomly cut, sequence, reconstruct
++ reconstruct: Shortest Super-string (understanding real-world problem into mathematical one)
+    * super/sub-string, pre/suffix, Kleene star/plus
+    * caveat: repetition (cf. telomere) -> double-barrel shotgun method (reading end, approximate length, reading end)
+    + caveat: reading error -> overcome with approximation/scoring/probability
+
++ solution
+    * remove sub-strings
+    * start & end positions are strictly ordered
+    * permutation & removing overlaps
+    * brute force: TSP
+    * greedy: merge maximally overlapping fragments
+
++ NP-??
+    * question on NP-??: NP-?? is about "checkable in polynomial time."
+      But is it able to check TSP solution's optimality in polynomial time?
+    * NP-hard: TODO
+    * NP-complete: TODO
+    * constant-factor approximation
+      e.g. 3.5 (proved), 2 (conjectured)
+
+
+
+
+# Part I: Background
+
+- students will read them all by themselves.
+- quiz? homework?
+
+
+
+
+(TODO: Chapter 11, Part IV, Part V, Part VI, Part VII, Part VIII, Part IX)
