@@ -34,9 +34,18 @@
 
 
 
-# Asymptotics
+# part I: background
 
-- motivation: ignore constant factors (effectively also ignoring lower-order terms)
+- students will read them all by themselves.
+- quiz? homework?
+
+
+
+
+# asymptotics
+
+- motivation: ignore constant factors (effectively also ignoring lower-order terms),
+              ignore small inputs
     + Q: how to precisely define "ignore ..."?
 
 - asymptotic dominance: f dominates g if exists c,n0 s.t. for all n>= 0, g(n) <= c f(n)
@@ -53,16 +62,37 @@
 
 
 
+# example: sorts
+
+- insertion sort
+    + work = O(n^2), span = O(n lg n)
+- (parallel) merge sort
+    + work = O(n lg n), span = O(lg^2 n)
+
+
+
+
+# recurrences
+
+- motivation: many algorithms reduce a problem into smaller ones, and thus costs are recursively represented.
+- example: insertion & merge sort
+
+- "tree" method: drawing the call tree and writing equations in summations
+- "brick" method: determine if it's root-/leaf-dominated and exploit its property.
+    + gives you some intuition where is dominating and to optimize: root? leaf?
+    + e.g. W(n) = W(n/2) + n is root-dominated.
+    + e.g. W(n) = 3W(n/2) + n is leaf-dominated.
+    + e.g. W(n) = W(sqrt(n)) + W(n/2) + n is root-dominated.
+    + e.g. W(n) = W(n/2) + W(n/3) + 1 is leaf-dominated (O(n^0.788))
+- "substitute" method": ...
+- there will be lecture on solving recurrences & math proofs in general
+
+
+
+
 # language
 
-- Part II
-
-- Call-by-value is inherently parallel: in (e1 e2), e1 and e2 can be executed in parallel.
-  Call-by-need (Haskell) is not.
-
-- parallelism should be stated as ||
-
-- language-based cost model (p81, Section 10.2)
+- motivation: clearly representing algorithms
 
 p := x | (p, p) | ...
 
@@ -80,11 +110,23 @@ e :=
 | (e)
 | case e (p => e)+
 
+- notable points
+    + pure functions: no side-effects, safe for parallelism
+      (e.g. race condition incurs 2003 Northeast blackout: 50 Million people in North America)
+
+    + first-class functions: can be passed as values
+    + (recursive) data types
+
+- cost model (p75, Definition 10.2)
+    + evaluation orders of application: call-by-value (parallel) and call-by-need (sequential)
+    + parallelism should be stated as "||"
+
 
 
 
 # specification
 
+- motivation: modularity
 - functional spec: what an algorithm should do, not how
     + e.g. comparison sort
 - cost spec: how much resource an algorithm takes
@@ -95,7 +137,6 @@ e :=
 - solution: implementation that solves the problem
     + insertion sort
     + (parallel) merge sort
-- motivation: modularity
 
 - abstract data types (ADT): set of interfacing functions
     + functional/cost spec for those functions
@@ -104,7 +145,6 @@ e :=
            push: O(lg n), O(lg n)
            pop: O(lg n), O(lg n)
     + ADT problem, implement data structures
-
 
 
 
@@ -138,12 +178,5 @@ e :=
 
 
 
-# Part I: Background
 
-- students will read them all by themselves.
-- quiz? homework?
-
-
-
-
-(TODO: Chapter 11, Part IV, Part V, Part VI, Part VII, Part VIII, Part IX)
+(TODO: Part IV, Part V, Part VI, Part VII, Part VIII, Part IX)
