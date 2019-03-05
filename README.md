@@ -12,8 +12,7 @@
 
 ## Announcements
 
-- 2019/02/27: The latest version of the textbook is provided (link below).
-- 2019/02/25: The course website is up!
+See the [issue tracker](https://github.com/kaist-cp/cs500-2019s/issues?q=is%3Aissue+is%3Aopen+label%3Aannouncement).
 
 
 ## Course Description
