@@ -68,6 +68,7 @@
     + work = O(n^2), span = O(n lg n)
 - (parallel) merge sort
     + work = O(n lg n), span = O(lg^2 n)
+      how to reduce span from O(nz) to O(lg^2 n)? see http://www.classes.cec.wustl.edu/~cse341/web/handouts/lecture10.pdf
 
 
 
@@ -108,7 +109,7 @@
 
 
 
-# language
+# language (slide)
 
 - motivation: clearly representing algorithms
 
@@ -135,13 +136,65 @@ e :=
 | case e (p => e)+
 
 - cost model (p75, Definition 10.2)
+    + motivation: basis for cost analysis (should be easy and relevant)
     + parallelism should be stated as "||"
     + evaluation orders of application: call-by-value
 
 
 
 
-# specification
+# example: genome sequencing problem
+
+- motivation: learning algorithm design patterns (reduction, brute force, divide and conquer, contraction, ...)
+
+- problem
+    + sequence of "AGCT" (figure?)
+    + human genome is large: 3 billions
+    + can sequence only short strings, biochemically
+    + should sequence long strings, computationally
+
+- mathematical modeling
+    + shotgun method: duplicate, randomly cut, sequence, reconstruct
+    + reduce to Shortest Super-string (understanding real-world problem into mathematical one)
+    + caveat: reading error and repetition (cf. telomere)
+    + moral: should adequately balance the trade-off between reality and simplicity
+
+- solution (to Shortest Super-string problem)
+    + background: super/sub-string, pre/suffix, Kleene star/plus
+    + reduction: remove sub-strings
+    + observation: start & end positions are strictly ordered
+    + modeling: TSP (permutation & removing overlaps)
+
+    + approach 1: brute force
+    + apporach 2: greedy (i.e. merging maximally overlapping fragments)
+      (constant-factor approximation algorithm of factor 3.5 (proved) or 2 (conjectured))
+    + todo: example.
+
+- overcoming caveats
+    + repetition -> double-barrel shotgun method (reading end, approximate length, reading end)
+    + reading error -> approximation/scoring/probability
+
+- digression: NP (nondeterministic polynomial time)
+    + motivation: TSP is known to be "NP". What is NP, exactly?
+
+    + definition of NP:
+      "the set of decision problems for which the problem instances, where the answer is "yes", have proofs verifiable in polynomial work."
+      "The set of decision problems solvable in polynomial work by a non-deterministic Turing machine."
+      todo: prove equivalence.
+
+    + question: how to verify the optimality of a TSP solution in polynomial work?
+      answer: TSP is not a decision problem, and thus is not NP.
+
+    + NP-hard: P is NP-hard if every NP problem can be reduced to P (https://en.wikipedia.org/wiki/NP-hardness)
+    + NP-complete: NP and NP-hard (https://en.wikipedia.org/wiki/NP-completeness)
+
+    + proving NP-hardness is not usually enough.
+      e.g. TSP in transportation business (Coupang, ...)
+
+
+
+
+# specification (todo: should we learn it?)
 
 - motivation: modularity
 - functional spec: what an algorithm should do, not how
@@ -162,35 +215,6 @@ e :=
            push: O(lg n), O(lg n)
            pop: O(lg n), O(lg n)
     + ADT problem, implement data structures
-
-
-
-
-# genome sequencing problem
-
-+ sequence of "AGCT"
-+ human genome is large: 3 billions
-+ fragments
-+ shotgun method: duplicate, randomly cut, sequence, reconstruct
-+ reconstruct: Shortest Super-string (understanding real-world problem into mathematical one)
-    * super/sub-string, pre/suffix, Kleene star/plus
-    * caveat: repetition (cf. telomere) -> double-barrel shotgun method (reading end, approximate length, reading end)
-    + caveat: reading error -> overcome with approximation/scoring/probability
-
-+ solution
-    * remove sub-strings
-    * start & end positions are strictly ordered
-    * permutation & removing overlaps
-    * brute force: TSP
-    * greedy: merge maximally overlapping fragments
-
-+ NP-??
-    * question on NP-??: NP-?? is about "checkable in polynomial time."
-      But is it able to check TSP solution's optimality in polynomial time?
-    * NP-hard: TODO
-    * NP-complete: TODO
-    * constant-factor approximation
-      e.g. 3.5 (proved), 2 (conjectured)
 
 
 
