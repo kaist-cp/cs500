@@ -109,8 +109,98 @@
 
 
 
-# language (slide)
+# example: genome sequencing problem
 
+- motivation: learning algorithm design patterns (reduction, brute force, divide and conquer, contraction, ...)
+
+- problem
+    + genome: strings of "ATCG" (model discovered after 1950)
+      (cf. beautiful figures in https://en.wikipedia.org/wiki/DNA))
+    + human genome is large: 3 billions
+    + want to sequence human genome (for medical reasons)
+    + can sequence only short strings, biochemically (10-1000)
+
+- mathematical model
+    + shotgun method: duplicate, randomly cut into fragments, sequence, reconstruct
+    + reduce the reconstruct problem to Shortest Super-string problem (Occam's razor)
+    + caveat: reading error and repetition (cf. telomere)
+    + moral: should adequately balance the trade-off between reality and simplicity
+      (e.g. vision problem -> model using e.g. imagenet competition -> caveat: adversarial attacks)
+      (e.g. hardware verification problem -> RTL model -> caveat: electron leaks, power failures, cosmic rays, ...)
+
+    + example:
+      cattaggagtat
+
+      catt ag gagtat
+      cat tagg ag tat
+      ca tta gga gtat
+
+      catt tta tagg gga gagtat
+
+- solution (to Shortest Super-string problem)
+    + background: super/sub-string, pre/suffix, Kleene star/plus
+
+    + brute force? (considering all strings)
+
+    + reduction: remove sub-strings of other fragments
+    + observation: start & end positions are strictly ordered
+    + reduction: consider all permutations of fragments
+                 minimize_{pi in S_n} (shortest superstring for pi)
+    + shortest superstring for pi: removing maximum overlaps
+      (cf. maximal <-> maximum)
+      (by induction; visually describe)
+    + reduction: minimize_pi (sigma |F(i)|) - (sigma overlap(F(pi(i)), F(pi(i+1))))
+    + reduction: maximize_pi (sigma overlap(F(pi(i)), F(pi(i+1))))
+    + reduction: let o(i,j)=overlap(F(i),F(j)) in    // 1
+                 maximize (sigma o(pi(i), pi(i+1)))  // 2
+
+    + brute force, revisited (considering all permutations)
+      W1, S1: O(m^2), O(lg m) (REVISIT "overlap")
+      W2, S2: O(n! * n), S(n)
+
+    + observation: NP-hard (reduction from TSP, REVISIT "NP")
+
+    + greedy (merging maximally overlapping fragments)
+        * e.g. catt, gagtat, tagg, tta, gga
+            -> catt, gagtat, tta, tagga
+            -> catta, gagtat, tagga
+            -> catta, gagtatagga
+            -> cattagagtatagga
+          (cf. cattaggagtat)
+ 
+        * W1, S1: O(m^2), O(lg m),
+          W2, S2: O(n^3), O(n lg n)
+          (better algorithm exists)
+
+        * constant-factor approximation algorithm of factor 3.5 (proved) or 2 (conjectured))
+
+- overcoming caveats
+    + repetition -> double-barrel shotgun method (reading end, approximate length, reading end)
+    + reading error -> approximation/scoring/probability
+
+- digression: NP (nondeterministic polynomial time)
+    + motivation: TSP is known to be "NP". What is NP, exactly?
+
+    + definition of NP:
+      "the set of decision problems for which the problem instances, where the answer is "yes", have proofs verifiable in polynomial work."
+      "The set of decision problems solvable in polynomial work by a non-deterministic Turing machine."
+      todo: prove equivalence.
+
+    + question: how to verify the optimality of a TSP solution in polynomial work?
+      answer: TSP is not a decision problem, and thus is not NP.
+
+    + NP-hard: P is NP-hard if every NP problem can be reduced to P (https://en.wikipedia.org/wiki/NP-hardness)
+    + NP-complete: NP and NP-hard (https://en.wikipedia.org/wiki/NP-completeness)
+
+    + proving NP-hardness is not usually enough.
+      e.g. TSP in transportation business (Coupang, ...)
+
+
+
+
+# language (todo: should we learn it?)
+
+- format: use slide
 - motivation: clearly representing algorithms
 
 - notable points
@@ -139,57 +229,6 @@ e :=
     + motivation: basis for cost analysis (should be easy and relevant)
     + parallelism should be stated as "||"
     + evaluation orders of application: call-by-value
-
-
-
-
-# example: genome sequencing problem
-
-- motivation: learning algorithm design patterns (reduction, brute force, divide and conquer, contraction, ...)
-
-- problem
-    + sequence of "AGCT" (figure?)
-    + human genome is large: 3 billions
-    + can sequence only short strings, biochemically
-    + should sequence long strings, computationally
-
-- mathematical modeling
-    + shotgun method: duplicate, randomly cut, sequence, reconstruct
-    + reduce to Shortest Super-string (understanding real-world problem into mathematical one)
-    + caveat: reading error and repetition (cf. telomere)
-    + moral: should adequately balance the trade-off between reality and simplicity
-
-- solution (to Shortest Super-string problem)
-    + background: super/sub-string, pre/suffix, Kleene star/plus
-    + reduction: remove sub-strings
-    + observation: start & end positions are strictly ordered
-    + modeling: TSP (permutation & removing overlaps)
-
-    + approach 1: brute force
-    + apporach 2: greedy (i.e. merging maximally overlapping fragments)
-      (constant-factor approximation algorithm of factor 3.5 (proved) or 2 (conjectured))
-    + todo: example.
-
-- overcoming caveats
-    + repetition -> double-barrel shotgun method (reading end, approximate length, reading end)
-    + reading error -> approximation/scoring/probability
-
-- digression: NP (nondeterministic polynomial time)
-    + motivation: TSP is known to be "NP". What is NP, exactly?
-
-    + definition of NP:
-      "the set of decision problems for which the problem instances, where the answer is "yes", have proofs verifiable in polynomial work."
-      "The set of decision problems solvable in polynomial work by a non-deterministic Turing machine."
-      todo: prove equivalence.
-
-    + question: how to verify the optimality of a TSP solution in polynomial work?
-      answer: TSP is not a decision problem, and thus is not NP.
-
-    + NP-hard: P is NP-hard if every NP problem can be reduced to P (https://en.wikipedia.org/wiki/NP-hardness)
-    + NP-complete: NP and NP-hard (https://en.wikipedia.org/wiki/NP-completeness)
-
-    + proving NP-hardness is not usually enough.
-      e.g. TSP in transportation business (Coupang, ...)
 
 
 
