@@ -1,0 +1,179 @@
+\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\newtheorem{example}{Example}
+
+\begin{document}
+
+\title{Lecture Note on Recurrences}
+\author{Jeehoon Kang}
+\maketitle
+
+\section{Textbook Reading}
+
+
+
+
+\section{Examples}
+
+
+\begin{example}[Balanced] Suppose $W(n) = 2W(n/2) + O(n)$.  Prove $W(n) = O(n~lg~n)$.
+\end{example}
+
+\begin{proof}
+  Prove by analyzing the recursion tree (``Tree method'', Example 11.4).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 n + c_2.$
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = c_1 n + c_2$, and
+    $\sum_{u \in D(v)} C(u) = 2(c_1 (n/2) + c_2) = c_1 n + 2 c_2$, where by $D(v)$ we mean the set
+    of children of $v$ in the recursion tree.
+
+    (We assume we already know what ``recursion tree'' is In the exam, but not what $C$ is.  Define
+    it first.)
+  \item The recursion tree has $lg~n + 1$ levels, and when walking down the tree, the cost increases
+    by the constant $c_2$.
+  \item Thus we have:
+    \begin{align*}
+      W(n)
+      = &~ \sum_{i=0}^{lg~n} (c_1 n + (i+1) c_2) & \mbox{($i=0$ is the root, $i=lg~n$ is the
+                                                   leaves)} \\
+      \le &~ c_1 n (lg~n + 1) + 2 c_2~lg^2~n \\
+      = &~ O(n~lg~n).
+    \end{align*}
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Root-dominated] Suppose $W(n) = 2W(n/2) + O(n^2)$.  Prove $W(n) = O(n^2)$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is root-dominated (Example 11.5).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 n^2 + c_2.$
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = c_1 n^2 + c_2$, and
+    $\sum_{u \in D(v)} C(u) = 2(c_1 (n/2)^2 + c_2) = 2 c_1 (n/2)^2 + 2 c_2$, where by $D(v)$ we mean
+    the set of children of $v$ in the recursion tree.
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{2 c_1 (n/2)^2 + 2 c_2}{c_1 n^2 + c_2} \\
+      = &~ \dfrac{1 + (4 c_2 / c_1) / n^2}{2 + (2 c_2 / c_1) / n^2} & \mbox{(by dividing by $c_1 n^2 / 2$)} \\
+      \le &~ 3/4. & \mbox{(if $(4 c_2 / c_1) / n^2 \le 1/2$)}
+    \end{align*}
+  \item So if $(4 c_2 / c_1) / n^2 \le 1/2$, or $\sqrt{8 c_2 / c_1} \le n$, then when walking down
+    the tree, the cost of a level in the recursion tree decreases more than a factor of $4/3$.
+  \item Thus the root dominates the cost, and $W(n) = O(C(n)) = O(c_1 n^2 + c_2) = O(n^2)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Leaf-dominated] Suppose $W(n) = 2W(n/2) + O(\sqrt{n})$.  Prove $W(n) = O(n)$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is leaf-dominated (Example 11.6).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 \sqrt{n} + c_2.$
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = c_1 \sqrt{n} + c_2$, and
+    $\sum_{u \in D(v)} C(u) = 2(c_1 \sqrt{n/2} + c_2) = \sqrt{2} c_1 \sqrt{n} + 2 c_2$, where by
+    $D(v)$ we mean the set of children of $v$ in the recursion tree.
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{\sqrt{2} c_1 \sqrt{n} + 2 c_2}{c_1 \sqrt{n} + c_2} \\
+      = &~ \dfrac{\sqrt{2} + (2 c_2 / c_1) / \sqrt{n}}{1 + (c_2 / c_1) / \sqrt{n}} & \mbox{(by dividing by $c_1 \sqrt{n}$)} \\
+      \ge &~ \sqrt{2}.
+    \end{align*}
+  \item So when walking down the tree, the cost of a level in the recursion tree increases more than
+    a factor of $\sqrt{2}$.
+  \item Thus the leaves dominate the cost, and $W(n) = O(\mbox{the number of leaves}) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Induction] Suppose $W(n) = W(n/2) + O(n)$.  Prove $W(n) = O(n)$.
+\end{example}
+
+\begin{proof}
+  First of all, by definition, there exists $c_1,c_2$ such that $W(n) \le W(n/2) + c_1 n + c_2$ for
+  $n > 1$, and $W(1) = c_2$.  We prove $W(n) \le (2 c_1 + c_2) n + c_2$ by induction.
+
+  \begin{itemize}
+  \item Base case $n=1$: We have $W(n) = W(1) \le c_2 \le (2 c_1 + c_2) n + c_2$.
+
+  \item Inductive case for $n$: We have:
+
+    \begin{align*}
+      W(n)
+      \le &~ W(n/2) + c_1 n + c_2 & \mbox{(by assumption)} \\
+      \le &~ ((2 c_1 + c_2) (n/2) + c_2) + c_1 n + c_2 & \mbox{(by inductive hypothesis)} \\
+      = &~ c_1 n + (c_2 / 2) n + c_1 n + 2 c_2 \\
+      = &~ (2 c_1 + c_2 n) + c_2 (2 - n/2) \\
+      \le &~ (2 c_1 + c_2 n) + c_2. & \mbox{(since $n \ge 2$)}
+    \end{align*}
+
+  \item By induction, we have $W(n) \le (2 c_1 + c_2) n + c_2$ for all $n$.  Thus $W(n) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+\begin{example}[Root-dominated, advanced] Suppose $W(n) = W(\sqrt{n}) + W(n/2) + n$.  Prove
+  $W(n) = O(n)$.
+\end{example}
+
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is root-dominated (page 95).
+
+  \begin{itemize}
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = n$, and $\sum_{u \in D(v)} C(u) = \sqrt{n} + (n/2)$, where by $D(v)$ we mean
+    the set of children of $v$ in the recursion tree.
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{\sqrt{n} + (n/2)}{n} \\
+      = &~ \dfrac{1 + 2/\sqrt{n}}{2} & \mbox{(by dividing by $n/2$)} \\
+      \le &~ 3/4. & \mbox{(if $2/\sqrt{n} \le 1/2$)}
+    \end{align*}
+  \item So if $2/\sqrt{n} \le 1/2$, or $16 \le n$, then when walking down the tree, the cost of a
+    level in the recursion tree decreases more than a factor of $4/3$.
+  \item Thus the root dominates the cost, and $W(n) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Leaf-dominated, advanced] Suppose $W(n) = W(n/2) + W(n/3) + 1$.  Prove
+  $W(n) = O(n^{0.788})$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is leaf-dominated (page 96).
+
+  \begin{itemize}
+  \item The recursion three is clearly leaf-dominated (exersize for the readers!).  Thus
+    $W(n) = O(\mbox{the number of leaves})$.  Let's count it.
+
+  \item Let $L(n)$ be the number of leaves when the size of the root is $n$.  Then we have
+    $L(n) = L(n/2) + L(n/3)$.  Now it's clearly $L(n) = O(n)$, but we want to find a tigher bound.
+
+  \item (Scribble: Let's guess that $L(n) = n^\beta$ for some $\beta$.  Then
+    $n^\beta = (n/2)^\beta + (n/3)^\beta = n^\beta ((1/2)^\beta + (1/3)^\beta)$, and thus
+    $1 = (1/2)^\beta + (1/3)^\beta$.  For this equation, there exists a real solution
+    $\beta \le 0.788$.)
+
+  \item As if we didn't scribble anything, just use the magic number $0.788$ and prove
+    $W(n) = O(n^{0.788})$ by induction.
+  \end{itemize}
+
+\end{document}
