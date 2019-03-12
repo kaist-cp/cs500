@@ -13,9 +13,12 @@
 \author{Jeehoon Kang}
 \maketitle
 
-\section{Textbook Reading}
+\section{Textbook}
 
-
+\begin{itemize}
+\item Read Sections 11.1, 11.2, 11.3 (pages 87-91).
+\item Solve examples and exercises in Sections 11.4, 11.5 (pages 91-98).
+\end{itemize}
 
 
 \section{Examples}
@@ -161,11 +164,11 @@
   Prove by exploiting the fact that $W(n)$ is leaf-dominated (page 96).
 
   \begin{itemize}
-  \item The recursion three is clearly leaf-dominated (exersize for the readers!).  Thus
+  \item The recursion three is clearly leaf-dominated (exercise for the readers!).  Thus
     $W(n) = O(\mbox{the number of leaves})$.  Let's count it.
 
   \item Let $L(n)$ be the number of leaves when the size of the root is $n$.  Then we have
-    $L(n) = L(n/2) + L(n/3)$.  Now it's clearly $L(n) = O(n)$, but we want to find a tigher bound.
+    $L(n) = L(n/2) + L(n/3)$.  Now it's clearly $L(n) = O(n)$, but we want to find a tighter bound.
 
   \item (Scribble: Let's guess that $L(n) = n^\beta$ for some $\beta$.  Then
     $n^\beta = (n/2)^\beta + (n/3)^\beta = n^\beta ((1/2)^\beta + (1/3)^\beta)$, and thus
@@ -175,5 +178,6 @@
   \item As if we didn't scribble anything, just use the magic number $0.788$ and prove
     $W(n) = O(n^{0.788})$ by induction.
   \end{itemize}
+\end{proof}
 
 \end{document}
