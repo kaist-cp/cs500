@@ -4,6 +4,8 @@
 \usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 \newtheorem{example}{Example}
 
@@ -13,19 +15,36 @@
 \author{Jeehoon Kang}
 \maketitle
 
-\section{Textbook}
+\section{Introduction}
+
+\paragraph{Study guide}
+
+I recommend you to study recurrences like this:
 
 \begin{itemize}
-\item Read Sections 11.1, 11.2, 11.3 (pages 87-91).
-\item Solve examples and exercises in Sections 11.4, 11.5 (pages 91-98).
+\item Read textbook's Section 11 (pages 87-98).
+\item Read \Cref{sec:examples} to see how proofs work.
+\item Solve examples and exercises in Sections 11.4, 11.5 (pages 91-98) on yourselves.
+\end{itemize}
+
+
+\paragraph{Exam guide}
+
+Here are a few tips for the exam.
+
+\begin{itemize}
+\item TODO
 \end{itemize}
 
 
 \section{Examples}
+\label{sec:examples}
 
 
 \begin{example}[Balanced] Suppose $W(n) = 2W(n/2) + O(n)$.  Prove $W(n) = O(n~lg~n)$.
 \end{example}
+
+TODO: it seems wrong.
 
 \begin{proof}
   Prove by analyzing the recursion tree (``Tree method'', Example 11.4).
@@ -122,8 +141,8 @@
       \le &~ W(n/2) + c_1 n + c_2 & \mbox{(by assumption)} \\
       \le &~ ((2 c_1 + c_2) (n/2) + c_2) + c_1 n + c_2 & \mbox{(by inductive hypothesis)} \\
       = &~ c_1 n + (c_2 / 2) n + c_1 n + 2 c_2 \\
-      = &~ (2 c_1 + c_2 n) + c_2 (2 - n/2) \\
-      \le &~ (2 c_1 + c_2 n) + c_2. & \mbox{(since $n \ge 2$)}
+      = &~ (2 c_1 + c_2)n + c_2 (2 - n/2) \\
+      \le &~ (2 c_1 + c_2)n + c_2. & \mbox{(since $n \ge 2$)}
     \end{align*}
 
   \item By induction, we have $W(n) \le (2 c_1 + c_2) n + c_2$ for all $n$.  Thus $W(n) = O(n)$.
