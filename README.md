@@ -3,7 +3,7 @@
 
 ## Logistics
 
-- Instructor: [Jeehoon Kang](https://sf.snu.ac.kr/jeehoon.kang)
+- Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
 - Teaching assistants: Jihoon Ko
 - Time & Place: Mon & Wed 09:00am-10:15am, Rm 403, Bldg E11
 - Office hour: TBA
