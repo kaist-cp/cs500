@@ -6,7 +6,7 @@
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
 - Teaching assistants: Jihoon Ko
 - Time & Place: Mon & Wed 09:00am-10:15am, Rm 403, Bldg E11
-- Office hour: TBA
+- Office hour: Wed 03:00pm-04:00pm, Rm. 4433, Bldg. E3-1
 - Website: https://github.com/kaist-cp/cs500-2019s
 
 
@@ -87,6 +87,7 @@ discrete mathematics (CS204), data structures (CS206), and algorithm (CS300), yo
 
 - [Algorithm Design: Parallel and Sequential](https://sites.google.com/view/algorithms-book/), Umut
   A. Acar and Guy E. Blelloch.
+- [Lecture note on recurrences](https://drive.google.com/a/cp.kaist.ac.kr/file/d/1zfHqYV1D7tMtOIA1mPae7abOp7TRBOw9)
 - TBA
 
 
@@ -130,3 +131,13 @@ For your information, the teaching staffs will do their best to detect cheating.
   brief description of the purpose of your email.  The content should at least contain your name and
   student number.  Any emails failing to do so (e.g. emails without student number) will not be
   answered.
+
+- In the office hour, we should follow the following rules (courtesy of PLRG):
+
+  + No debugging.
+
+  + No replay of lectures.
+
+  + No Gwan-Shim-Bub. In other words, you should not ask what you are not aware of.
+
+  + No study. Study home, and bring questions and comments to the office hour.
