@@ -22,18 +22,39 @@
 I recommend you to study recurrences like this:
 
 \begin{itemize}
-\item Read textbook's Section 11 (pages 87-98).
+\item Read the textbook's Section 11 (pages 87-98).
 \item Read \Cref{sec:examples} to see how proofs work.
-\item Solve examples and exercises in Sections 11.4, 11.5 (pages 91-98) on yourselves.
+\item Solve the examples and exercises in the textbook's Sections 11.4, 11.5 (pages 91-98) on
+  yourselves.
 \end{itemize}
 
 
 \paragraph{Exam guide}
 
-Here are a few tips for the exam.
+Here are a few tips for the quizzes and exams.
 
 \begin{itemize}
-\item TODO
+\item The most foundational way to solve a recurrence is by induction (what is called ``substitution
+  method'' in the textbook).  Even if someone is very pedantic, s/he should accept proofs by
+  induction as far as s/he believes in Mathematics.
+
+\item ``Tree method'' and ``brick method'' are lemmas that deal with all the difficulties of proof
+  by induction.  In the exams, you can freely use these methods as lemmas, except when the problem
+  specifically asks you to prove it by induction.
+
+\item Tree method: analyzing the recursion tree, and then deriving a closed-form solution.
+
+\item Brick method says:
+  \begin{itemize}
+  \item If a recursion tree is root-dominated, then the total work is asymptotically equivalent to
+    the work at the root.
+  \item If a recursion tree is leaf-dominated, then the total work is asymptotically equivalent to
+    the number of leaves.
+  \end{itemize}
+
+\item You can assume the grader already knows what ``recursion tree'' and ``level'' means, and
+  assume the root is at the level $0$ (unless specified otherwise).  But you should not assume the
+  grader is aware of \emph{e.g.} what $C(v)$ or $D(v)$ means for recursion trees.
 \end{itemize}
 
 
@@ -44,28 +65,24 @@ Here are a few tips for the exam.
 \begin{example}[Balanced] Suppose $W(n) = 2W(n/2) + O(n)$.  Prove $W(n) = O(n~lg~n)$.
 \end{example}
 
-TODO: it seems wrong.
-
 \begin{proof}
-  Prove by analyzing the recursion tree (``Tree method'', Example 11.4).
+  We prove using the tree method, \emph{i.e.} analyzing the recursion tree and deriving a
+  closed-form solution (Example 11.4).
 
   \begin{itemize}
   \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 n + c_2.$
-  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
-    $n$, then $C(v) = c_1 n + c_2$, and
-    $\sum_{u \in D(v)} C(u) = 2(c_1 (n/2) + c_2) = c_1 n + 2 c_2$, where by $D(v)$ we mean the set
-    of children of $v$ in the recursion tree.
+  \item (Draw the recursion tree.)
+  \item We can deduce from the tree that for the level $i$, there are $2^i$ nodes and the cost of
+    each node is $c_1 (n (1/2)^i) + c_2$.  (To be pedantic, we can prove it by induction.)
+  \item Thus the cost of the level $i$ is $2^i \times (c_1 (n (1/2)^i) + c_2) = c_1 n + 2^i c_2$.
 
-    (We assume we already know what ``recursion tree'' is In the exam, but not what $C$ is.  Define
-    it first.)
-  \item The recursion tree has $lg~n + 1$ levels, and when walking down the tree, the cost increases
-    by the constant $c_2$.
-  \item Thus we have:
+  \item Since the recursion tree has $lg~n + 1$ levels, we have:
     \begin{align*}
       W(n)
-      = &~ \sum_{i=0}^{lg~n} (c_1 n + (i+1) c_2) & \mbox{($i=0$ is the root, $i=lg~n$ is the
-                                                   leaves)} \\
-      \le &~ c_1 n (lg~n + 1) + 2 c_2~lg^2~n \\
+      = &~ \sum_{i=0}^{lg~n} (c_1 n + 2^i c_2) & \mbox{($i=0$ for the root, $i=lg~n$ for the
+                                                 leaves)} \\
+      \le &~ c_1 n (lg~n + 1) + 2^{lg~n + 1} c_2 \\
+      = &~ c_1 n (lg~n + 1) + 2 n c_2 \\
       = &~ O(n~lg~n).
     \end{align*}
   \end{itemize}
@@ -84,6 +101,9 @@ TODO: it seems wrong.
     $n$, then $C(v) = c_1 n^2 + c_2$, and
     $\sum_{u \in D(v)} C(u) = 2(c_1 (n/2)^2 + c_2) = 2 c_1 (n/2)^2 + 2 c_2$, where by $D(v)$ we mean
     the set of children of $v$ in the recursion tree.
+
+    (Caution: we assume the grader already knows what ``recursion tree'' means, but you should
+    define $C(v)$ and $D(v)$ on yourselves.)
   \item We have:
     \begin{align*}
       \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
