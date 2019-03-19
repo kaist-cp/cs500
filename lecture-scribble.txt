@@ -156,7 +156,7 @@
 
     + brute force, revisited (considering all permutations)
       W1, S1: O(m^2), O(lg m) (REVISIT "overlap")
-      W2, S2: O(n! * n), S(n)
+      W2, S2: O(n! * n), O(n)
 
     + observation: NP-hard (reduction from TSP, REVISIT "NP")
 
@@ -194,6 +194,13 @@
 
     + proving NP-hardness is not usually enough.
       e.g. TSP in transportation business (Coupang, ...)
+
+
+
+
+# sequence
+
+- Read Part IV: Sequences (too many materials to write in the board...)
 
 
 
