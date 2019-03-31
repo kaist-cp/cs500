@@ -1,0 +1,193 @@
+\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\newcommand{\kwtrue}{\textsl{true}}
+\newcommand{\kwfalse}{\textsl{false}}
+
+
+\begin{document}
+
+\title{Lecture Note on Search Algorithms}
+\author{Jeehoon Kang}
+\maketitle
+
+\section{Breadth-First Search (BFS)}
+
+\paragraph{Algorithm}
+
+Here is the BFS algorithm:
+
+\begin{algorithm}
+  \caption{Breadth-First Search Algorithm}\label{bfs}
+  \begin{algorithmic}[1]
+    \Procedure{BFS}{$G,v_0$} \Comment{BFS search algorithm}
+    \State $\Call{BFSInner}{G,\emptyset,\{v_0\}}$
+    \EndProcedure
+    \Statex
+    \Procedure{BFSInner}{$G=(V,E),X,F$} \Comment{A helper function for BFS}
+    \If{$F = \emptyset$} \Comment{(needs: set empty predicate)}
+    \State \textbf{return} $X$
+    \EndIf
+    \State $X' = X \cup F$ \Comment{(needs: set union)}
+    \State $F' = N^+_G(F) \setminus X'$ \Comment{(needs: set flatten, set minus)}
+    \State $\Call{BFSInner}{G,X',F'}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+The above algorithm omits to implement the set operations highlighted above.  We present two
+strategies for implementing sets: representing them as a boolean sequence, or as an element
+sequence.  We begin with representing both $X$ and $F$ as boolean sequences.
+
+
+\paragraph{Representing Set as a Boolean Sequence}
+
+Let $V = \{v_0,v_1,\cdots,v_{|V|-1}\}$.  Then the sets $X, F \subseteq V$ can be represented as a
+sequence of booleans of length $|V|$, where a sequence $S \in \mathbb{S}_{\mathbb{B}}$ represents
+the set consisting of those elements $v_i$ for which $S_i$ is true.  For example, if
+$V = \{v_0,v_1,v_2\}$, then $\langle \kwfalse, \kwtrue, \kwtrue \rangle$ represents the set
+$\{v_1,v_2\}$.
+
+Set operations are defined as follows:
+
+\begin{itemize}
+\item $\texttt{empty} = \texttt{tabulate}~(\lambda \_.~\kwfalse)~|V|$
+\item $\texttt{is\_empty}(X) = \neg (\texttt{reduce}~\lor~\kwfalse~X)$
+\item $\texttt{union}~A~B = \texttt{combine}~\lor~A~B$
+\item $\texttt{minus}~A~B = \texttt{combine}~(\lambda a~b.~a \land \neg b)~A~B$
+\item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
+\end{itemize}
+
+By plugging in the above set operations, we have a complete BFS implementation.  It has $O(|V|^2)$
+work and $O(|V|~lg~|V|)$ span.
+
+
+\paragraph{Representing $F$ as an Index Sequence}
+
+Representing $F$ as a boolean sequence is wasteful because, regardless of how many elements are in
+$F$, it will iterate over all $|V|$ vertices at line 9, which dominates the work of the entire
+algorithm.
+
+To optimize line 9, we represent $F$ as a sequence of indexes instead of as a sequence of booleans.
+The set $F \subseteq V$ can be represented as a sequence of indexes whose corresponding elements are
+in $F$.  For example, if $V = \{v_0,v_1,v_2\}$, then both $\langle 1,2 \rangle$ and
+$\langle 2,1 \rangle$ represent the set $\{v_1,v_2\}$.
+
+Set operations are defined as follows (here, $F,A,B$ are represented as an index sequence and $X$ as
+a boolean sequence):
+
+\begin{itemize}
+\item $\texttt{convert}~X = \texttt{map}~\texttt{fst}~(\texttt{filter}~\texttt{snd}~(\texttt{mapi}~(\lambda i,b. (i,b))~X))$
+\item $\texttt{convert}~F = (\texttt{let}~F' = \texttt{sort}~F~\texttt{in}~\cdots)$
+\item $\texttt{empty} = \langle~\rangle$
+\item $\texttt{is\_empty}(X) = (|X| = 0)$
+\item $\texttt{union}~A~B = \texttt{append}~A~B$
+\item $\texttt{minus}~F~X = \texttt{filter}~(\lambda f.~\neg X_f)~F$
+\item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
+\end{itemize}
+
+By plugging in the above set operations, we have another complete BFS implementation, whose work is
+$O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_0$ in $G$.
+
+
+\paragraph{Correctness} The following lemma on \textsc{BFSInner} is the key for BFS's correctness:
+
+\begin{lemma}[Inductive invariant of \textsc{BFSInner}] In the recursion tree of
+  $\textsc{BFS}(G,v_0)$, for each invocation $\textsc{BFSInner}(G,X,F)$, the following condition
+  holds:
+  \[ \forall v.~\mbox{($v$ is reachable from $v_0$ in $G$)} \iff (v \in X~\lor~\mbox{($v$ is
+      reachable from $F$ in $G \setminus X$)}).
+  \]  
+\end{lemma}
+\begin{proof}
+  By induction.  For the base case, the first invocation $\textsc{BFSInner}(G,\emptyset,\{v_0\})$
+  trivially satisfies the above condition.  For the inductive case, consider the invocation
+  $\textsc{BFSInner}(G,X',F')$ from another one $\textsc{BFSInner}(G,X,F)$.
+
+  The remainder of the proof is left as homework.  (Question: how did we find the inductive
+  invariant?)
+\end{proof}
+
+From the above lemma comes the following theorem naturally:
+
+\begin{theorem}[Correctness of \textsc{BFS}] For any $G$, $v_0$, and $v$, $v$ is reachable from
+  $v_0$ in $G$ if and only if $v \in \textsc{BFS}(G,v_0)$.
+\end{theorem}
+
+
+
+\section{Dijkstra's Algorithm}
+
+In this section, assume that all edge weights are non-negative.
+
+\paragraph{Algorithm}
+
+Here is the Dijkstra's algorithm:
+
+\begin{algorithm}
+  \caption{Dijkstra's Algorithm}\label{dijkstra}
+  \begin{algorithmic}[1]
+    \Procedure{Dijkstra}{$G,v_0$} \Comment{Dijkstra's shortest path algorithm}
+    \State $D_0 = \langle \infty, \cdots, \infty, 0, \infty, \cdots, \infty \rangle$ \Comment{$\infty$ except for the initial vertex}
+    \State $\Call{DijkstraInner}{G,D_0,\emptyset,\{v_0\}}$
+    \EndProcedure
+    \Statex
+    \Procedure{DijkstraInner}{$G=(V,E),D,X,F$} \Comment{A helper function for Dijkstra}
+    \If{$F = \emptyset$}
+    \State \textbf{return} $X$
+    \EndIf
+    \State Let $f \in F$ be a frontier with the minimum distance $D_f$
+    \State $D' = \texttt{combine}~\texttt{min}~D~(N^+_G(f) + D_f)$ \Comment{(abusing a lot of notations)}
+    \State $X' = X \cup \{f\}$
+    \State $F' = (F \cup N^+_G(f)) \setminus X'$
+    \State $\Call{DijkstraInner}{G,D',X',F'}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\paragraph{Cost}
+
+When representing $X$ as a boolean sequence and $F$ as an index sequence, Dijkstra's algorithm's
+work is $O(|V|^2)$ and span is $O(|V|~lg~|V|)$.  By using a more sophisticated data structure
+(e.g. the priority queue), we can optimize (work-wise) Dijkstra's algorithm.
+
+
+
+\paragraph{Correctness} The following lemma on \textsc{DijkstraInner} is the key for Dijkstra's
+correctness:
+
+\begin{lemma}[Inductive invariant of \textsc{DijkstraInner}] In the recursion tree of
+  $\textsc{Dijkstra}(G,v_0)$, for each invocation $\textsc{DijkstraInner}(G,D,X,F)$, the following
+  condition holds:
+  \[ \forall v.~\delta_G(v_0,v) = \texttt{min}(D_v, (\texttt{min}_{f \in F} (D_f + (\delta_{G
+      \setminus X}(f,v))))),
+  \]  
+  where $\delta_G(v,w)$ is the shortest path length from $v$ to $w$ in $G$.
+\end{lemma}
+\begin{proof}
+  Homework.  (Question: how did we find the inductive invariant?)
+\end{proof}
+
+From the above lemma comes the following theorem naturally:
+
+\begin{theorem}[Correctness of \textsc{Dijkstra}] For any $G$, $v_0$, and $v$,
+  $\textsc{Dijkstra}(G,v_0)_v$ is the shortest path length from $v_0$ to $v$.
+\end{theorem}
+
+
+
+\end{document}
