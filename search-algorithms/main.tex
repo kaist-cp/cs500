@@ -17,6 +17,17 @@
 \newcommand{\kwtrue}{\textsl{true}}
 \newcommand{\kwfalse}{\textsl{false}}
 
+% New definitions
+\algnewcommand\algorithmicswitch{\textbf{switch}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicassert{\texttt{assert}}
+\algnewcommand\Assert[1]{\State \algorithmicassert(#1)}%
+% New "environments"
+\algdef{SE}[SWITCH]{Switch}{EndSwitch}[1]{\algorithmicswitch\ #1\ \algorithmicdo}{\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]{\algorithmiccase\ #1}{\algorithmicend\ \algorithmiccase}%
+\algtext*{EndSwitch}%
+\algtext*{EndCase}%
+
 
 \begin{document}
 
@@ -28,13 +39,13 @@
 
 \paragraph{Algorithm}
 
-Here is the BFS algorithm:
+Here is the BFS algorithm that finds all reachable vertices from a given vertex:
 
 \begin{algorithm}
   \caption{Breadth-First Search Algorithm}\label{bfs}
   \begin{algorithmic}[1]
-    \Procedure{BFS}{$G,v_0$} \Comment{BFS search algorithm}
-    \State $\Call{BFSInner}{G,\emptyset,\{v_0\}}$
+    \Procedure{BFS}{$G,v_i$} \Comment{BFS search algorithm}
+    \State $\Call{BFSInner}{G,\emptyset,\{v_i\}}$
     \EndProcedure
     \Statex
     \Procedure{BFSInner}{$G=(V,E),X,F$} \Comment{A helper function for BFS}
@@ -100,20 +111,20 @@ a boolean sequence):
 \end{itemize}
 
 By plugging in the above set operations, we have another complete BFS implementation, whose work is
-$O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_0$ in $G$.
+$O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_i$ in $G$.
 
 
 \paragraph{Correctness} The following lemma on \textsc{BFSInner} is the key for BFS's correctness:
 
 \begin{lemma}[Inductive invariant of \textsc{BFSInner}] In the recursion tree of
-  $\textsc{BFS}(G,v_0)$, for each invocation $\textsc{BFSInner}(G,X,F)$, the following condition
+  $\textsc{BFS}(G,v_i)$, for each invocation $\textsc{BFSInner}(G,X,F)$, the following condition
   holds:
-  \[ \forall v.~\mbox{($v$ is reachable from $v_0$ in $G$)} \iff (v \in X~\lor~\mbox{($v$ is
+  \[ \forall v.~\mbox{($v$ is reachable from $v_i$ in $G$)} \iff (v \in X~\lor~\mbox{($v$ is
       reachable from $F$ in $G \setminus X$)}).
   \]  
 \end{lemma}
 \begin{proof}
-  By induction.  For the base case, the first invocation $\textsc{BFSInner}(G,\emptyset,\{v_0\})$
+  By induction.  For the base case, the first invocation $\textsc{BFSInner}(G,\emptyset,\{v_i\})$
   trivially satisfies the above condition.  For the inductive case, consider the invocation
   $\textsc{BFSInner}(G,X',F')$ from another one $\textsc{BFSInner}(G,X,F)$.
 
@@ -123,26 +134,69 @@ $O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_0$ i
 
 From the above lemma comes the following theorem naturally:
 
-\begin{theorem}[Correctness of \textsc{BFS}] For any $G$, $v_0$, and $v$, $v$ is reachable from
-  $v_0$ in $G$ if and only if $v \in \textsc{BFS}(G,v_0)$.
+\begin{theorem}[Correctness of \textsc{BFS}] For any $G$, $v_i$, and $v$, $v$ is reachable from
+  $v_i$ in $G$ if and only if $v \in \textsc{BFS}(G,v_i)$.
 \end{theorem}
+
+
+
+\section{Depth-First Search (DFS)}
+
+\paragraph{Algorithm}
+
+Here is the DFS algorithm that finds all reachable vertices from a given vertex:
+
+\begin{algorithm}
+  \caption{Depth-First Search Algorithm}\label{dfs}
+  \begin{algorithmic}[1]
+    \Procedure{DFS}{$G,v_i$} \Comment{DFS search algorithm}
+    \State $\Call{DFSInner}{G,\emptyset,\langle v_i\rangle}$
+    \EndProcedure
+    \Statex
+    \Procedure{DFSInner}{$G=(V,E),X,S$} \Comment{A helper function for DFS}
+    \Switch {$\textrm{splitHead}(S)$}
+    \Case {\textrm{None}}
+    \State $X$
+    \EndCase
+    \Case {$\textrm{Some}(v,S_t)$}
+    \State $X' = X \cup \{v\}$
+    \State $S' = (v \in X~\texttt{?}~\langle \rangle~\texttt{:}~N^+_G(v))~\texttt{++}~S_t$
+    \State $\Call{DFSInner}{G,X',S'}$
+    \EndCase
+    \EndSwitch
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+The sequence $S$ (representing a stack) is implemented with a linked list.
+
+
+\paragraph{Cost}
+
+In the recursion tree of \textsc{DFS}, there are at most $|E|$ invocations of \textsc{DFSInner}, and
+the vertices in total are inserted into the stack ($S$) at most $|E|$ times.  Thus \textsc{DFS} has
+$O(|E|)$ work.  Since the algorithm is completely sequential, it has $O(|E|)$ span.
+
+
+
+\paragraph{Correctness} The correctness proof of DFS is similar to that of BFS.
 
 
 
 \section{Dijkstra's Algorithm}
 
-In this section, assume that all edge weights are non-negative.
-
 \paragraph{Algorithm}
 
-Here is the Dijkstra's algorithm:
+Here is the Dijkstra's algorithm that finds the shortest path length from a given vertex to all
+vertices, assuming that all edge weights are non-negative.
+
 
 \begin{algorithm}
   \caption{Dijkstra's Algorithm}\label{dijkstra}
   \begin{algorithmic}[1]
-    \Procedure{Dijkstra}{$G,v_0$} \Comment{Dijkstra's shortest path algorithm}
+    \Procedure{Dijkstra}{$G,v_i$} \Comment{Dijkstra's shortest path algorithm}
     \State $D_0 = \langle \infty, \cdots, \infty, 0, \infty, \cdots, \infty \rangle$ \Comment{$\infty$ except for the initial vertex}
-    \State $\Call{DijkstraInner}{G,D_0,\emptyset,\{v_0\}}$
+    \State $\Call{DijkstraInner}{G,D_0,\emptyset,\{v_i\}}$
     \EndProcedure
     \Statex
     \Procedure{DijkstraInner}{$G=(V,E),D,X,F$} \Comment{A helper function for Dijkstra}
@@ -171,9 +225,9 @@ work is $O(|V|^2)$ and span is $O(|V|~lg~|V|)$.  By using a more sophisticated d
 correctness:
 
 \begin{lemma}[Inductive invariant of \textsc{DijkstraInner}] In the recursion tree of
-  $\textsc{Dijkstra}(G,v_0)$, for each invocation $\textsc{DijkstraInner}(G,D,X,F)$, the following
+  $\textsc{Dijkstra}(G,v_i)$, for each invocation $\textsc{DijkstraInner}(G,D,X,F)$, the following
   condition holds:
-  \[ \forall v.~\delta_G(v_0,v) = \texttt{min}(D_v, (\texttt{min}_{f \in F} (D_f + (\delta_{G
+  \[ \forall v.~\delta_G(v_i,v) = \texttt{min}(D_v, (\texttt{min}_{f \in F} (D_f + (\delta_{G
       \setminus X}(f,v))))),
   \]  
   where $\delta_G(v,w)$ is the shortest path length from $v$ to $w$ in $G$.
@@ -184,8 +238,63 @@ correctness:
 
 From the above lemma comes the following theorem naturally:
 
-\begin{theorem}[Correctness of \textsc{Dijkstra}] For any $G$, $v_0$, and $v$,
-  $\textsc{Dijkstra}(G,v_0)_v$ is the shortest path length from $v_0$ to $v$.
+\begin{theorem}[Correctness of \textsc{Dijkstra}] For any $G$, $v_i$, and $v$,
+  $\textsc{Dijkstra}(G,v_i)_v$ is the shortest path length from $v_i$ to $v$.
+\end{theorem}
+
+
+
+\section{Floyd-Warshall Algorithm}
+
+\paragraph{Algorithm}
+
+Here is the Floyd-Warshall algorithm that finds the shortest path length from all vertices to all
+vertices, assuming that all edge weights are non-negative.
+
+\begin{algorithm}
+  \caption{Floyd-Warshall Algorithm}\label{dijkstra}
+  \begin{algorithmic}[1]
+    \Procedure{Floyd-Warshall}{$G = (V,E)$} \Comment{Floyd and Warshall's shortest path algorithm}
+    \State $D_0 = E$ \Comment{The initial distance matrix}
+    \State $\Call{Floyd-WarshallInner}{G,D_0,0}$
+    \EndProcedure
+    \Statex
+    \Procedure{Floyd-WarshallInner}{$G=(V,E),D,k$} \Comment{A helper function}
+    \If{$k = |V|$}
+    \State \textbf{return} $D$
+    \EndIf
+    \State Let $D' = [(i,j) \mapsto \textrm{min}(D_{i,j}, D_{i,k} + D_{k,j})]$
+    \State $\Call{Floyd-WarshallInner}{G,D',k+1}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\paragraph{Cost}
+
+In the recursion tree, an invocation of \textsc{Floyd-WarshallInner} has $O(|V|^2)$ work and $O(1)$
+span.  Thus the total work and span of \textsc{Floyd-Warshall} is $O(|V|^3)$ and $O(|V|)$.
+
+
+\paragraph{Correctness} The following lemma on \textsc{Floyd-WarshallInner} is the key for
+Floyd-Warshall algorithm's correctness:
+
+\begin{lemma}[Inductive invariant of \textsc{Floyd-WarshallInner}] In the recursion tree of
+  $\textsc{Floyd-Warshall}(G)$, for each invocation $\textsc{Floyd-WarshallInner}(G,D,k)$, the
+  following condition holds:
+  \[ \forall i,j.~D_{i,j} = \delta_{i,j}^k,
+  \]  
+\end{lemma}
+where $\delta_{i,j}^k$ is the shortest length of the paths from $i$ to $j$ where the intermediate
+vertices are in $\{0,1,\cdots,(k-1)\}$.
+\begin{proof}
+  Homework.  (Question: how did we find the inductive invariant?)
+\end{proof}
+
+From the above lemma comes the following theorem naturally:
+
+\begin{theorem}[Correctness of \textsc{Floyd-Warshall}] For any $G$, $i$, and $j$,
+  $\textsc{Floyd-Warshall}(G)_{i,j}$ is the shortest path length from $v_i$ to $v_j$.
 \end{theorem}
 
 
