@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problem}
+
+\begin{document}
+
+\title{CS500 Quiz on Background}
+\maketitle
+
+\noindent Use mathematical notations in your answer.
+
+\begin{problem}[0 pts]
+  Define the Cartesian product $A \times B$.
+\end{problem}
+\begin{proof}[Answer]
+  $A \times B = \{(a,b)~:~a \in A, b \in B\}$.
+\end{proof}
+
+
+\begin{problem}[10 pts]
+  Define ``set partition''.
+\end{problem}
+\begin{proof}[Answer]
+  Given a set $A$, a set $P$ is a \emph{partition} of $A$ if:
+  \begin{itemize}
+  \item (Join) $\bigcup_{X \in P} = A$;
+  \item (Inclusive) For all $X \in P$, $X \subseteq A$;
+  \item (Disjoint) For all $X, Y \in P$, $X \cap Y = \emptyset$ or $X = Y$; and
+  \item (Nonempty) For all $X \in P$, $X \neq \emptyset$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{problem}[10 pts]
+  Let $f: \{0,1,2\} \to \{0,1,2\}$ be a function for which $f(0) = 0, f(1) = 1, f(2) = 1$.  What are
+  the \emph{domain}, \emph{co-domain}, and \emph{range} of $f$?
+\end{problem}
+\begin{proof}[Answer]
+  The domain is $\{0,1,2\}$, the co-domain is $\{0,1,2\}$, and the range is $\{0,1\}$.
+\end{proof}
+
+
+\begin{problem}[50 pts]
+  Let $G = (V,E)$ be an undirected graph.
+
+  \begin{enumerate}
+  \item Define the set $Paths(G)$ of (possibly non-simple) paths of $G$.
+  \item Define the set $SimplPaths(G)$ of simple paths of $G$.  You can use $Paths(G)$ is your
+    answer.  (From now on, you can use the notion defined in an earlier sub-problem in a later one.)
+  \item Define the set $SimplCycles(G)$ of simple cycles of $G$.
+  \item Define the predicate $Connected(G)$.
+  \item Define the predicate $IsPartition(P, G)$, where $P$ is a set of undirected graphs.
+  \end{enumerate}
+\end{problem}
+\begin{proof}[Answer]
+  Definitions are as follows.
+  \begin{enumerate}
+  \item $Paths(G) = \{p \in V^+~|~\forall i \in [0,|p|-1), \{p_i,p_{i+1}\} \in E \}$.
+  \item
+    $SimplPaths(G) = \{p \in Paths(G)~|~ \forall i,j \in [0,|p|), i \neq j \implies p_i \neq p_j
+    \mbox{~or~} \{i,j\} = \{0,|p|-1\} \}$.
+  \item $SimplCycles(G) = \{p \in SimplPaths(G)~|~ p_0 = p_{|p|-1} \}$.
+  \item $Connected(G) = \forall v,u \in V.~\exists p \in Paths(G).~p_0 = u \land p_{|p|-1} = v$.
+  \item $IsPartition(P,G) = \exists P_V.~\mbox{($P_V$ is a set partition of $V$)} \land P = \{(V',E')~|~V' \in P_V \land E' = \{\{a,b\} \in E~|~a,b \in V'\}\}$.
+  \end{enumerate}
+\end{proof}
+
+
+\begin{problem}[30 pts]
+  Let $G$ be a tree rooted at $v_0$.
+
+  \begin{enumerate}
+  \item Define $Depth(G, v_0, v)$, where the depth of the root is 1 and it increases by 1 for
+    children.
+  \item Define $Height(G, v_0)$.
+  \item Define $IsLeaf(G, v_0, v)$.
+  \end{enumerate}
+\end{problem}
+\begin{proof}[Answer]
+  Definitions are as follows.
+  \begin{itemize}
+  \item $Depth(G,v_0,v) = \mbox{Min}_{p \in Paths(G)} ((p_0 = v_0 \land p_{|p|-1} = v)~?~|p|~:~\infty)$.
+  \item $Height(G,v_0) = \mbox{Min}_{v \in V} Depth(G,v_0,v)$.
+  \item $IsLeaf(G,v_0,v) = \forall u \in N_G(v), Depth(G,v_0,u) < Depth(G,v_0,v)$.
+  \end{itemize}
+\end{proof}
+
+
+\end{document}
