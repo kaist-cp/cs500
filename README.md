@@ -91,6 +91,13 @@ discrete mathematics (CS204), data structures (CS206), and algorithm (CS300), yo
 - TBA
 
 
+## Other Materials
+
+- LaTeX Tutorials at Overleaf: [Learn LaTeX in 30
+    Minutes](https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes#Adding_math_to_LaTeX)
+    and [Theorems and Proofs](https://www.overleaf.com/learn/latex/Theorems_and_proofs).
+
+
 ## Grading
 
 - Attendance (including quiz): 10%
