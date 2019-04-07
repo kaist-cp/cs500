@@ -132,7 +132,7 @@ $O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_i$ i
   invariant?)
 \end{proof}
 
-From the above lemma comes the following theorem naturally:
+From the above lemma follows the correctness of the algorithm:
 
 \begin{theorem}[Correctness of \textsc{BFS}] For any $G$, $v_i$, and $v$, $v$ is reachable from
   $v_i$ in $G$ if and only if $v \in \textsc{BFS}(G,v_i)$.
@@ -187,7 +187,7 @@ $O(|E|)$ work.  Since the algorithm is completely sequential, it has $O(|E|)$ sp
 
 \paragraph{Algorithm}
 
-Here is the Dijkstra's algorithm that finds the shortest path length from a given vertex to all
+Here is the Dijkstra's algorithm that finds the shortest path weight from a given vertex to all
 vertices, assuming that all edge weights are non-negative.
 
 
@@ -224,37 +224,99 @@ work is $O(|V|^2)$ and span is $O(|V|~lg~|V|)$.  By using a more sophisticated d
 \paragraph{Correctness} The following lemma on \textsc{DijkstraInner} is the key for Dijkstra's
 correctness:
 
-\begin{lemma}[Inductive invariant of \textsc{DijkstraInner}] In the recursion tree of
-  $\textsc{Dijkstra}(G,v_i)$, for each invocation $\textsc{DijkstraInner}(G,D,X,F)$, the following
-  condition holds:
-  \[ \forall v.~\delta_G(v_i,v) = \texttt{min}(D_v, (\texttt{min}_{f \in F} (D_f + (\delta_{G
-      \setminus X}(f,v))))),
-  \]  
-  where $\delta_G(v,w)$ is the shortest path length from $v$ to $w$ in $G$.
+\begin{lemma}[Inductive invariant of \textsc{DijkstraInner}] Suppose $\delta_G(v,w)$ is the shortest
+  path weight from $v$ to $w$ in $G$.  In the recursion tree of $\textsc{Dijkstra}(G,v_i)$, for each
+  invocation $\textsc{DijkstraInner}(G,D,X,F)$, the following conditions holds:
+  \begin{itemize}
+  \item $X \cap F = \emptyset$;
+  \item $\forall v \notin X \cup F, D_v = \infty$;
+  \item $\forall v \in X.~\delta_G(v_i,v) = D_v$; and
+  \item
+    $\forall v \notin X.~\delta_G(v_i,v) = \texttt{min}_{f \in F} (D_f + (\delta_{G \setminus
+      X}(f,v)))$.
+  \end{itemize}
 \end{lemma}
 \begin{proof}
   Homework.  (Question: how did we find the inductive invariant?)
 \end{proof}
 
-From the above lemma comes the following theorem naturally:
+From the above lemma follows the correctness of the algorithm:
 
 \begin{theorem}[Correctness of \textsc{Dijkstra}] For any $G$, $v_i$, and $v$,
-  $\textsc{Dijkstra}(G,v_i)_v$ is the shortest path length from $v_i$ to $v$.
+  $\textsc{Dijkstra}(G,v_i)_v$ is the shortest path weight from $v_i$ to $v$.
 \end{theorem}
 
 
 
-\section{Floyd-Warshall Algorithm}
+\section{Bellman-Ford's Algorithm}
 
 \paragraph{Algorithm}
 
-Here is the Floyd-Warshall algorithm that finds the shortest path length from all vertices to all
-vertices, assuming that all edge weights are non-negative.
+Here is the Bellman-Ford's algorithm that finds the shortest path weight from a given vertex to all
+vertices, assuming that there are possibly edges with negative weight but no cycles of negative
+weight.
 
 \begin{algorithm}
-  \caption{Floyd-Warshall Algorithm}\label{dijkstra}
+  \caption{Bellman-Ford's Algorithm}\label{dijkstra}
   \begin{algorithmic}[1]
-    \Procedure{Floyd-Warshall}{$G = (V,E)$} \Comment{Floyd and Warshall's shortest path algorithm}
+    \Procedure{Bellman-Ford}{$G,v_i$} \Comment{Bellman-Ford's shortest path algorithm}
+    \State $D_0 = \langle \infty, \cdots, \infty, 0, \infty, \cdots, \infty \rangle$ \Comment{$\infty$ except for the initial vertex}
+    \State $\Call{Bellman-FordInner}{G,D_0,0}$
+    \EndProcedure
+    \Statex
+    \Procedure{Bellman-FordInner}{$G=(V,E),D,k$} \Comment{A helper function}
+    \If{$k = |V|$}
+    \State \textbf{return} $D$
+    \EndIf
+    \State Let $D' = [i \mapsto \textrm{min}(D_i, \textrm{min}_{v_j \in N^-_G(v_i)} (D_j + w_G(i,j)))]$
+    \State $\Call{Bellman-FordInner}{G,D',k+1}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\paragraph{Cost}
+
+In the recursion tree, an invocation of \textsc{Bellman-FordInner} has $O(|E|)$ work and $O(lg~|V|)$
+span.  Thus the total work and span of \textsc{Bellman-Ford} is $O(|V||E|)$ and $O(|V|~lg~|V|)$.
+
+
+
+\paragraph{Correctness} The following lemma on \textsc{Bellman-FordInner} is the key for Bellman-Ford's
+correctness:
+
+\begin{lemma}[Inductive invariant of \textsc{Bellman-FordInner}] In the recursion tree of
+  $\textsc{Bellman-Ford}(G)$, for each invocation $\textsc{Bellman-FordInner}(G,D,k)$, the
+  following condition holds:
+  \[ \forall i,j.~D_{i,j} = \delta_G^k(v_i,v_j),
+  \]  
+  where $\delta_G^k(v_i,v_j)$ is the shortest weight of the paths from $v_i$ to $v_j$ in $G$ of
+  length $\le k+1$.
+\end{lemma}
+\begin{proof}
+  Homework.  (Question: how did we find the inductive invariant?)
+\end{proof}
+
+From the above lemma follows the correctness of the algorithm:
+
+\begin{theorem}[Correctness of \textsc{Bellman-Ford}] For any $G$, $i$, and $j$,
+  $\textsc{Bellman-Ford}(G,v_i)_{j}$ is the shortest path weight from $v_i$ to $v_j$.
+\end{theorem}
+
+
+
+\section{Floyd-Warshall's Algorithm}
+
+\paragraph{Algorithm}
+
+Here is the Floyd-Warshall's algorithm that finds the shortest path weight from all vertices to all
+vertices, assuming that there are possibly edges with negative weight but no cycles of negative
+weight.
+
+\begin{algorithm}
+  \caption{Floyd-Warshall's Algorithm}\label{dijkstra}
+  \begin{algorithmic}[1]
+    \Procedure{Floyd-Warshall}{$G = (V,E)$} \Comment{Floyd-Warshall's shortest path algorithm}
     \State $D_0 = E$ \Comment{The initial distance matrix}
     \State $\Call{Floyd-WarshallInner}{G,D_0,0}$
     \EndProcedure
@@ -277,24 +339,24 @@ span.  Thus the total work and span of \textsc{Floyd-Warshall} is $O(|V|^3)$ and
 
 
 \paragraph{Correctness} The following lemma on \textsc{Floyd-WarshallInner} is the key for
-Floyd-Warshall algorithm's correctness:
+Floyd-Warshall's algorithm's correctness:
 
 \begin{lemma}[Inductive invariant of \textsc{Floyd-WarshallInner}] In the recursion tree of
   $\textsc{Floyd-Warshall}(G)$, for each invocation $\textsc{Floyd-WarshallInner}(G,D,k)$, the
   following condition holds:
-  \[ \forall i,j.~D_{i,j} = \delta_{i,j}^k,
-  \]  
+  \[ \forall i,j.~D_{i,j} = \delta_G^k(v_i,v_j),
+  \]
+  where $\delta_G^k(v_i,v_j)$ is the shortest weight of the paths from $v_i$ to $v_j$ in $G$ where
+  the intermediate vertices are in $\{0,1,\cdots,(k-1)\}$.
 \end{lemma}
-where $\delta_{i,j}^k$ is the shortest length of the paths from $i$ to $j$ where the intermediate
-vertices are in $\{0,1,\cdots,(k-1)\}$.
 \begin{proof}
   Homework.  (Question: how did we find the inductive invariant?)
 \end{proof}
 
-From the above lemma comes the following theorem naturally:
+From the above lemma follows the correctness of the algorithm:
 
 \begin{theorem}[Correctness of \textsc{Floyd-Warshall}] For any $G$, $i$, and $j$,
-  $\textsc{Floyd-Warshall}(G)_{i,j}$ is the shortest path length from $v_i$ to $v_j$.
+  $\textsc{Floyd-Warshall}(G)_{i,j}$ is the shortest path weight from $v_i$ to $v_j$.
 \end{theorem}
 
 
