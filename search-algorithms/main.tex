@@ -203,10 +203,10 @@ vertices, assuming that all edge weights are non-negative.
     \If{$F = \emptyset$}
     \State \textbf{return} $X$
     \EndIf
-    \State Let $f \in F$ be a frontier with the minimum distance $D_f$
-    \State $D' = \texttt{combine}~\texttt{min}~D~(N^+_G(f) + D_f)$ \Comment{(abusing a lot of notations)}
-    \State $X' = X \cup \{f\}$
-    \State $F' = (F \cup N^+_G(f)) \setminus X'$
+    \State Let $f_0 \in F$ be a frontier with the minimum distance $D_{f_0}$
+    \State $D' = \texttt{combine}~\texttt{min}~D~(N^+_G(f_0) + D_{f_0})$ \Comment{(abusing a lot of notations)}
+    \State $X' = X \cup \{f_0\}$
+    \State $F' = (F \cup N^+_G(f_0)) \setminus X'$
     \State $\Call{DijkstraInner}{G,D',X',F'}$
     \EndProcedure
   \end{algorithmic}
@@ -230,15 +230,66 @@ correctness:
   \begin{itemize}
   \item $X \cap F = \emptyset$;
   \item $\forall v \notin X \cup F, D_v = \infty$;
+  \item $\forall v\in X, w \notin X.~D_v \le D_w$;
   \item $\forall v \in X.~\delta_G(v_i,v) = D_v$; and
   \item
     $\forall v \notin X.~\delta_G(v_i,v) = \texttt{min}_{f \in F} (D_f + (\delta_{G \setminus
       X}(f,v)))$.
   \end{itemize}
+
+  (Question: how did we find the inductive invariant?)
 \end{lemma}
 \begin{proof}
-  Homework.  (Question: how did we find the inductive invariant?)
+  By induction.
+
+  \begin{itemize}
+  \item In the initial case, we have $(D, X, F) = (D_0, \emptyset, \{v_i\})$.  All conditions trivially hold.
+  \item In the inductive case, we have:
+    \begin{align*}
+      \forall v.~D'_v =&~ \textrm{min}(D_v, w_G(f_0,v)) \\
+      X' =&~ X \cup F \\
+      F' =&~ (F \cup N^+_G(f_0)) \setminus X'~,
+    \end{align*}
+    where $D', X', F'$ are the arguments for the recursive invocation of \textsc{DijkstraInner}.
+    Now we prove that the conditions hold for $D', X', F'$, assuming they hold for $D, X, F$ as the
+    inductive hypothesis.
+
+    \begin{itemize}
+    \item $X' \cup F' = X' \cup ((F \cup N^+_G(f_0)) \setminus X') = \emptyset$.
+
+    \item If $v \notin X' \cup F'$, we have $v \notin X \cup F \cup N^+_G(f_0)$ and thus
+      $v \notin X \cup F$ and $v \notin N^+_G(f_0)$.  Then we have:
+      %
+      \begin{align*}
+        D'_v
+        =&~ \textrm{min}(D_v, w_G(f_0,v)) \\
+        =&~ \textrm{min}(\infty, w_G(f_0,v)) & \mbox{(by $v \notin X \cup F$ and IH)} \\
+        =&~ \textrm{min}(\infty, \infty) & \mbox{(by $v \notin N^+_G(f_0)$)} \\
+        =&~ \infty.
+      \end{align*}
+
+    \item If $v \in X'$, then $D'_v \le D_{f_0}$.  If $w \notin X'$, then $D'_w \ge D_{f_0}$.  Thus
+      $\forall v\in X, w \notin X.~D_v \le D_w$.
+
+    \item If $v \in X'$, then either $v \in X$ or $v = f_0$.
+
+      If $v \in X'$, then $\delta_G(v_i,v) = D_v$ from the IH's fourth condition, and $D_v = D'_v$
+      from the IH's third condition.
+
+      If $v = f_0$, we have:
+      \begin{align*}
+        \delta_G(v_i,v) =&~ \texttt{min}_{f \in F} (D_f + (\delta_{G \setminus X}(f,v))) & \mbox{(by the IH's
+                                                                                           fifth condition)} \\
+        =&~ D_{f_0} & \mbox{($\because [\forall f \in F.~D_{f_0} \le D_f]$ and
+                      $\delta_{G \setminus X}(f_0,v) = 0$)} \\
+        =&~ D'_{f_0}~. & \mbox{($\because 0 \le w_G(f_0,f_0)$)}
+      \end{align*}
+
+    \item ... (Coming soon!)
+    \end{itemize}
+  \end{itemize}
 \end{proof}
+
 
 From the above lemma follows the correctness of the algorithm:
 
