@@ -78,7 +78,7 @@ Set operations are defined as follows:
 \item $\texttt{empty} = \texttt{tabulate}~(\lambda \_.~\kwfalse)~|V|$
 \item $\texttt{is\_empty}(X) = \neg (\texttt{reduce}~\lor~\kwfalse~X)$
 \item $\texttt{union}~A~B = \texttt{combine}~\lor~A~B$
-\item $\texttt{minus}~A~B = \texttt{combine}~(\lambda a~b.~a \land \neg b)~A~B$
+\item $\textrm{minus}~A~B = \texttt{combine}~(\lambda a~b.~a \land \neg b)~A~B$
 \item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
 \end{itemize}
 
@@ -106,7 +106,7 @@ a boolean sequence):
 \item $\texttt{empty} = \langle~\rangle$
 \item $\texttt{is\_empty}(X) = (|X| = 0)$
 \item $\texttt{union}~A~B = \texttt{append}~A~B$
-\item $\texttt{minus}~F~X = \texttt{filter}~(\lambda f.~\neg X_f)~F$
+\item $\textrm{minus}~F~X = \texttt{filter}~(\lambda f.~\neg X_f)~F$
 \item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
 \end{itemize}
 
@@ -204,7 +204,7 @@ vertices, assuming that all edge weights are non-negative.
     \State \textbf{return} $X$
     \EndIf
     \State Let $f_0 \in F$ be a frontier with the minimum distance $D_{f_0}$
-    \State $D' = \texttt{combine}~\texttt{min}~D~(N^+_G(f_0) + D_{f_0})$ \Comment{(abusing a lot of notations)}
+    \State $D' = \texttt{combine}~\textrm{min}~D~(N^+_G(f_0) + D_{f_0})$ \Comment{(abusing a lot of notations)}
     \State $X' = X \cup \{f_0\}$
     \State $F' = (F \cup N^+_G(f_0)) \setminus X'$
     \State $\Call{DijkstraInner}{G,D',X',F'}$
@@ -233,7 +233,7 @@ correctness:
   \item $\forall v\in X, w \notin X.~D_v \le D_w$;
   \item $\forall v \in X.~\delta_G(v_i,v) = D_v$; and
   \item
-    $\forall v \notin X.~\delta_G(v_i,v) = \texttt{min}_{f \in F} (D_f + (\delta_{G \setminus
+    $\forall v \notin X.~\delta_G(v_i,v) = \textrm{min}_{f \in F} (D_f + (\delta_{G \setminus
       X}(f,v)))$.
   \end{itemize}
 
@@ -278,14 +278,27 @@ correctness:
 
       If $v = f_0$, we have:
       \begin{align*}
-        \delta_G(v_i,v) =&~ \texttt{min}_{f \in F} (D_f + (\delta_{G \setminus X}(f,v))) & \mbox{(by the IH's
+        \delta_G(v_i,v) =&~ \textrm{min}_{f \in F} (D_f + (\delta_{G \setminus X}(f,v))) & \mbox{(by the IH's
                                                                                            fifth condition)} \\
         =&~ D_{f_0} & \mbox{($\because [\forall f \in F.~D_{f_0} \le D_f]$ and
                       $\delta_{G \setminus X}(f_0,v) = 0$)} \\
         =&~ D'_{f_0}~. & \mbox{($\because 0 \le w_G(f_0,f_0)$)}
       \end{align*}
 
-    \item ... (Coming soon!)
+    \item If $v \notin X'$, then we have $v \notin X$ and $v \neq f_0$.  We have:
+      \begin{align*}
+        \delta_G(v_i,v) =&~ \textrm{min}_{f \in F} (D_f + (\delta_{G \setminus X}(f,v))) & \mbox{(by the IH's
+                                                                                           fifth cond.)} \\
+        =&~ \textrm{min} [ D_{f_0} + (\delta_{G \setminus X}(f_0,v)), \\
+                         &~ ~~~~~~\textrm{min}_{f \in F \setminus \{f_0\}} (D_f + \delta_{G \setminus X}(f,v)) ] \\
+        =&~ \textrm{min} [ D_{f_0} + \textrm{min}_{u \in N^+_G(f_0) \setminus X'}(w_G(f_0,u) + \delta_{G \setminus X'}(u,v)), & \mbox{($\because f_0 \neq v$)} \\
+                         &~ ~~~~~~\textrm{min}_{f \in F \setminus \{f_0\}} (D_f + \delta_{G \setminus X}(f,v)) ] \\
+        =&~ \textrm{min} [ D_{f_0} + \textrm{min}_{u \in N^+_G(f_0) \setminus X'}(w_G(f_0,u) + \delta_{G \setminus X'}(u,v)), & \mbox{($\because$ visiting $f_0$ is bad} \\
+                         &~ ~~~~~~\textrm{min}_{f \in F \setminus \{f_0\}} (D_f + \delta_{G \setminus X'}(f,v)) ] & \mbox{as $D_{f_0} \le D_f$)} \\
+        =&~ \textrm{min}_{f \in (N^+_G(f_0) \setminus X') \cup (F \setminus \{f_0\})} \\
+        &~ ~~~~~~[\textrm{min}(D_{f_0} + w_G(f_0,f), D_f) + \delta_{G \setminus X'}(f,v)] \\
+        =&~ \textrm{min}_{f \in F'} D'_f + \delta_{G \setminus X'}(f,v)
+      \end{align*}
     \end{itemize}
   \end{itemize}
 \end{proof}
