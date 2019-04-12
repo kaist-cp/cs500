@@ -201,7 +201,7 @@ vertices, assuming that all edge weights are non-negative.
     \Statex
     \Procedure{DijkstraInner}{$G=(V,E),D,X,F$} \Comment{A helper function for Dijkstra}
     \If{$F = \emptyset$}
-    \State \textbf{return} $X$
+    \State \textbf{return} $D$
     \EndIf
     \State Let $f_0 \in F$ be a frontier with the minimum distance $D_{f_0}$
     \State $D' = \texttt{combine}~\textrm{min}~D~(N^+_G(f_0) + D_{f_0})$ \Comment{(abusing a lot of notations)}
