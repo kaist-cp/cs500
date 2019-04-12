@@ -104,7 +104,7 @@ a boolean sequence):
 \item $\texttt{convert}~X = \texttt{map}~\texttt{fst}~(\texttt{filter}~\texttt{snd}~(\texttt{mapi}~(\lambda i,b. (i,b))~X))$
 \item $\texttt{convert}~F = (\texttt{let}~F' = \texttt{sort}~F~\texttt{in}~\cdots)$
 \item $\texttt{empty} = \langle~\rangle$
-\item $\texttt{is\_empty}(X) = (|X| = 0)$
+\item $\texttt{is\_empty}(F) = (|F| = 0)$
 \item $\texttt{union}~A~B = \texttt{append}~A~B$
 \item $\textrm{minus}~F~X = \texttt{filter}~(\lambda f.~\neg X_f)~F$
 \item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
