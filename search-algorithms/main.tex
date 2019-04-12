@@ -246,8 +246,8 @@ correctness:
   \item In the initial case, we have $(D, X, F) = (D_0, \emptyset, \{v_i\})$.  All conditions trivially hold.
   \item In the inductive case, we have:
     \begin{align*}
-      \forall v.~D'_v =&~ \textrm{min}(D_v, w_G(f_0,v)) \\
-      X' =&~ X \cup F \\
+      \forall v.~D'_v =&~ \textrm{min}(D_v, D_{f_0} + w_G(f_0,v)) \\
+      X' =&~ X \cup \{f_0\} \\
       F' =&~ (F \cup N^+_G(f_0)) \setminus X'~,
     \end{align*}
     where $D', X', F'$ are the arguments for the recursive invocation of \textsc{DijkstraInner}.
