@@ -86,32 +86,32 @@ By plugging in the above set operations, we have a complete BFS implementation. 
 work and $O(|V|~lg~|V|)$ span.
 
 
-\paragraph{Representing $F$ as an Index Sequence}
+\paragraph{Representing $F$ as a Sorted Index Sequence}
 
 Representing $F$ as a boolean sequence is wasteful because, regardless of how many elements are in
 $F$, it will iterate over all $|V|$ vertices at line 9, which dominates the work of the entire
 algorithm.
 
-To optimize line 9, we represent $F$ as a sequence of indexes instead of as a sequence of booleans.
-The set $F \subseteq V$ can be represented as a sequence of indexes whose corresponding elements are
-in $F$.  For example, if $V = \{v_0,v_1,v_2\}$, then both $\langle 1,2 \rangle$ and
-$\langle 2,1 \rangle$ represent the set $\{v_1,v_2\}$.
+To optimize line 9, we represent $F$ as a sorted sequence of indexes instead of as a sequence of
+booleans.  The set $F \subseteq V$ can be represented as a sorted sequence of indexes whose
+corresponding elements are in $F$.  For example, if $V = \{v_0,v_1,v_2\}$, then both
+$\langle 1,2 \rangle$ and $\langle 2,1 \rangle$ represent the set $\{v_1,v_2\}$.
 
-Set operations are defined as follows (here, $F,A,B$ are represented as an index sequence and $X$ as
-a boolean sequence):
+Set operations are defined as follows (here, $F,A,B$ are represented as a sorted index sequence and
+$X$ as a boolean sequence):
 
 \begin{itemize}
 \item $\texttt{convert}~X = \texttt{map}~\texttt{fst}~(\texttt{filter}~\texttt{snd}~(\texttt{mapi}~(\lambda i,b. (i,b))~X))$
 \item $\texttt{convert}~F = (\texttt{let}~F' = \texttt{sort}~F~\texttt{in}~\cdots)$
 \item $\texttt{empty} = \langle~\rangle$
 \item $\texttt{is\_empty}(F) = (|F| = 0)$
-\item $\texttt{union}~A~B = \texttt{append}~A~B$
+\item $\texttt{union}~A~B = \texttt{merge}~A~B$
 \item $\textrm{minus}~F~X = \texttt{filter}~(\lambda f.~\neg X_f)~F$
 \item $\texttt{flatten}~\mathcal{A} = \texttt{reduce}~\texttt{union}~\texttt{empty}~\mathcal{A}$
 \end{itemize}
 
 By plugging in the above set operations, we have another complete BFS implementation, whose work is
-$O(|E|)$ and span is $O(d~lg~|V|)$, where $d$ is the maximum length from $v_i$ in $G$.
+$O(|E|~lg~|V|)$ and span is $O(d~lg^2~|V|)$, where $d$ is the maximum length from $v_i$ in $G$.
 
 
 \paragraph{Correctness} The following lemma on \textsc{BFSInner} is the key for BFS's correctness:
@@ -215,9 +215,9 @@ vertices, assuming that all edge weights are non-negative.
 
 \paragraph{Cost}
 
-When representing $X$ as a boolean sequence and $F$ as an index sequence, Dijkstra's algorithm's
-work is $O(|V|^2)$ and span is $O(|V|~lg~|V|)$.  By using a more sophisticated data structure
-(e.g. the priority queue), we can optimize (work-wise) Dijkstra's algorithm.
+When representing $X$ as a boolean sequence and $F$ as a sorted index sequence, Dijkstra's
+algorithm's work is $O(|V|^2)$ and span is $O(|V|~lg~|V|)$.  By using a more sophisticated data
+structure (e.g. the priority queue), we can optimize (work-wise) Dijkstra's algorithm.
 
 
 
