@@ -32,7 +32,6 @@
   Given a set $A$, a set $P$ is a \emph{partition} of $A$ if:
   \begin{itemize}
   \item (Join) $\bigcup_{X \in P} = A$;
-  \item (Inclusive) For all $X \in P$, $X \subseteq A$;
   \item (Disjoint) For all $X, Y \in P$, $X \cap Y = \emptyset$ or $X = Y$; and
   \item (Nonempty) For all $X \in P$, $X \neq \emptyset$.
   \end{itemize}
@@ -88,7 +87,7 @@
   Definitions are as follows.
   \begin{itemize}
   \item $Depth(G,v_0,v) = \mbox{Min}_{p \in Paths(G)} ((p_0 = v_0 \land p_{|p|-1} = v)~?~|p|~:~\infty)$.
-  \item $Height(G,v_0) = \mbox{Min}_{v \in V} Depth(G,v_0,v)$.
+  \item $Height(G,v_0) = \mbox{Max}_{v \in V} Depth(G,v_0,v)$.
   \item $IsLeaf(G,v_0,v) = \forall u \in N_G(v), Depth(G,v_0,u) < Depth(G,v_0,v)$.
   \end{itemize}
 \end{proof}
