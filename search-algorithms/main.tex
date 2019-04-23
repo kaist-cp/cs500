@@ -318,7 +318,7 @@ From the above lemma follows the correctness of the algorithm:
 
 Here is the Bellman-Ford's algorithm that finds the shortest path weight from a given vertex to all
 vertices, assuming that there are possibly edges with negative weight but no cycles of negative
-weight.
+distance.
 
 \begin{algorithm}
   \caption{Bellman-Ford's Algorithm}\label{dijkstra}
@@ -332,7 +332,7 @@ weight.
     \If{$k = |V|$}
     \State \textbf{return} $D$
     \EndIf
-    \State Let $D' = [i \mapsto \textrm{min}(D_i, \textrm{min}_{v_j \in N^-_G(v_i)} (D_j + w_G(i,j)))]$
+    \State Let $D' = [i \mapsto \textrm{min}(D_i, \textrm{min}_{v_j \in N^-_G(v_i)} (D_j + w_G(j,i)))]$
     \State $\Call{Bellman-FordInner}{G,D',k+1}$
     \EndProcedure
   \end{algorithmic}
@@ -354,7 +354,7 @@ correctness:
   following condition holds:
   \[ \forall i,j.~D_{i,j} = \delta_G^k(v_i,v_j),
   \]  
-  where $\delta_G^k(v_i,v_j)$ is the shortest weight of the paths from $v_i$ to $v_j$ in $G$ of
+  where $\delta_G^k(v_i,v_j)$ is the shortest distance of the paths from $v_i$ to $v_j$ in $G$ of
   length $\le k+1$.
 \end{lemma}
 \begin{proof}
@@ -375,7 +375,7 @@ From the above lemma follows the correctness of the algorithm:
 
 Here is the Floyd-Warshall's algorithm that finds the shortest path weight from all vertices to all
 vertices, assuming that there are possibly edges with negative weight but no cycles of negative
-weight.
+distance.
 
 \begin{algorithm}
   \caption{Floyd-Warshall's Algorithm}\label{dijkstra}
@@ -410,7 +410,7 @@ Floyd-Warshall's algorithm's correctness:
   following condition holds:
   \[ \forall i,j.~D_{i,j} = \delta_G^k(v_i,v_j),
   \]
-  where $\delta_G^k(v_i,v_j)$ is the shortest weight of the paths from $v_i$ to $v_j$ in $G$ where
+  where $\delta_G^k(v_i,v_j)$ is the shortest distance of the paths from $v_i$ to $v_j$ in $G$ where
   the intermediate vertices are in $\{0,1,\cdots,(k-1)\}$.
 \end{lemma}
 \begin{proof}
