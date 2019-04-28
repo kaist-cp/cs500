@@ -1,0 +1,132 @@
+\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\newcommand{\kwtrue}{\textsl{true}}
+\newcommand{\kwfalse}{\textsl{false}}
+
+% New definitions
+\algnewcommand\algorithmicswitch{\textbf{switch}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicassert{\texttt{assert}}
+\algnewcommand\Assert[1]{\State \algorithmicassert(#1)}%
+% New "environments"
+\algdef{SE}[SWITCH]{Switch}{EndSwitch}[1]{\algorithmicswitch\ #1\ \algorithmicdo}{\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]{\algorithmiccase\ #1}{\algorithmicend\ \algorithmiccase}%
+\algtext*{EndSwitch}%
+\algtext*{EndCase}%
+
+
+\begin{document}
+
+\title{Lecture Note on Limited Resources}
+\author{Jeehoon Kang}
+\maketitle
+
+\section{Brent's Theorem}
+
+\begin{theorem}[Brent]
+  Let $W$ and $S$ be the work and span of an algorithm.  Given $P$ processors, it is possible to
+  execute the algorithm with the time complexity $T = O \Big( \dfrac{W}{P} + S \Big)$.
+\end{theorem}
+
+For the proof of Brent's theorem, we refer the reader to a Wikipedia page:
+\url{https://en.wikipedia.org/wiki/Analysis_of_parallel_algorithms}.  Basically, it is cleverly
+scheduling the jobs on the $P$ processors.
+
+
+
+\paragraph{Example: Matrix Multiplication}
+
+Multiplying two matrices of size $n \times n$ costs $O(n^3)$ work and $O(lg~n)$ span.  Given varying
+number of processors, you can execute the algorithm with the time complexity as follows:
+
+\begin{center}
+\begin{tabular}{ c | c }
+ \# of processors & time complexity \\
+  \hline
+ $O(1)$ & $O(n^3)$ \\
+ $O(n)$ & $O(n^2)$ \\
+ $O(n^2)$ & $O(n)$ \\
+ $O(n^3)$ & $O(lg~n)$ \\
+ $O(\infty)$ & $O(lg~n)$
+\end{tabular}
+\end{center}
+
+
+
+\section{Systolic Array}
+
+\paragraph{Example}
+
+These videos are excellent examples of systolic array:
+\url{https://www.youtube.com/watch?v=nzVyQzv8FG8} \url{https://www.youtube.com/watch?v=eK5fjuEFJu0}
+Watching these videos, you will quite get the idea of systolic array.
+
+FYI, ``systolic'' means ``relating to the phase of the heartbeat when the heart muscle contracts and
+pumps blood from the chambers into the arteries.''
+(\url{https://en.oxforddictionaries.com/definition/systolic}).
+
+
+\paragraph{Algorithm}
+
+Here is the systolic array algorithm:
+
+\begin{algorithm}
+  \caption{Systolic Array}\label{systolic}
+  \begin{algorithmic}[1]
+    \Procedure{Systolic}{$W,X$} \Comment{Systolic array algorithm}
+    \State $I_0 = [(i,j) \mapsto 0]$ \Comment{Systolic input from $X$}
+    \State $A_0 = [(i,j) \mapsto 0]$ \Comment{Accumulator}
+    \State $O_0 = [(i,j) \mapsto 0]$ \Comment{Output ($W \times X$)}
+    \State $\Call{SystolicInner}{W,X,0,I_0,A_0,O_0}$
+    \EndProcedure
+    \Statex
+    \Procedure{SystolicInner}{$W,X,k,I,A,O$} \Comment{A helper function}
+    \If{$k = 3n-1$}
+    \State \textbf{return} $O$
+    \EndIf
+    \State $I' = [(i,j) \mapsto (i=0)~?~X(k-j,j)~:~I(i-1,j)]$
+    \State $A' = [(i,j) \mapsto ((j=0)~?~0~:~A(i,j-1)) + (W(i,j) \times I'(i,j)))]$
+    \State $O' = O[\forall i.~(k-n-i,i) \mapsto A(i,n-1)]$
+    \State $\Call{SystolicInner}{W,X,k+1,I',A',O'}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+An invocation to \textsc{SystolicInner} costs $O(n^2)$ work and $O(1)$ span.  Thus the total cost of
+\textsc{Systolic} is $O(n^3)$ work and $O(n)$ span.
+
+
+\paragraph{Discussion}
+
+Systolic array is a way of realizing the matrix multiplication algorithm with $n^2$ processors and
+$O(n)$ time complexity, by $(i)$ placing the $n^2$ processors in square ($n \times n$), and $(ii)$
+assigning the computation of $I(i,j)$, $A(i,j)$, and $O(i,j)$ to the $(i,j)$-th processor.  In other
+words, you may think of systolic array as the combination of $(i)$ the matrix multiplication
+algorithm and $(ii)$ a scheduling strategy for $n^2$ processors.  Until the midterm exam, we had
+mostly focused on the pure algorithm aspect like $(i)$; from now on, we will also focus on the
+resource aspect like $(ii)$.
+
+Notice that systolic array exhibits excellent spatial locality: the computation within a processor
+requires only those values in the same or adjacent processor.  Systolic array is designed so as to
+exploit this spatial locality.
+
+Systolic array is widely deployed in high-performance computer architecture.  For example, Google's
+TPU has a systolic array of ${256}^2$ processors (see \url{https://arxiv.org/pdf/1704.04760.pdf} for
+more details).
+
+
+\end{document}

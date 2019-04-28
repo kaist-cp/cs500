@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+<\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
 \usepackage[margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -332,7 +332,7 @@ distance.
     \If{$k = |V|$}
     \State \textbf{return} $D$
     \EndIf
-    \State Let $D' = [i \mapsto \textrm{min}(D_i, \textrm{min}_{v_j \in N^-_G(v_i)} (D_j + w_G(j,i)))]$
+    \State Let $D' = [w \mapsto \textrm{min}(D_w, \textrm{min}_{v_j \in N^-_G(v_w)} (D_j + w_G(j,w)))]$
     \State $\Call{Bellman-FordInner}{G,D',k+1}$
     \EndProcedure
   \end{algorithmic}
@@ -352,7 +352,7 @@ correctness:
 \begin{lemma}[Inductive invariant of \textsc{Bellman-FordInner}] In the recursion tree of
   $\textsc{Bellman-Ford}(G)$, for each invocation $\textsc{Bellman-FordInner}(G,D,k)$, the
   following condition holds:
-  \[ \forall i,j.~D_{i,j} = \delta_G^k(v_i,v_j),
+  \[ \forall j.~D_j = \delta_G^k(v_i,v_j),
   \]  
   where $\delta_G^k(v_i,v_j)$ is the shortest distance of the paths from $v_i$ to $v_j$ in $G$ of
   length $\le k+1$.
