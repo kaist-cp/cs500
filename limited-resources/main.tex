@@ -35,17 +35,23 @@
 \author{Jeehoon Kang}
 \maketitle
 
+Until the midterm exam, we had mostly focused on the pure algorithms.  From now on, we will also
+focus on the limited resources such as processors, cache, memory, etc.
+
+
 \section{Brent's Theorem}
+
+Let's first consider processors.  Fortunately, parallel algorithms enjoy the following property:
 
 \begin{theorem}[Brent]
   Let $W$ and $S$ be the work and span of an algorithm.  Given $P$ processors, it is possible to
   execute the algorithm with the time complexity $T = O \Big( \dfrac{W}{P} + S \Big)$.
 \end{theorem}
 
-For the proof of Brent's theorem, we refer the reader to a Wikipedia page:
-\url{https://en.wikipedia.org/wiki/Analysis_of_parallel_algorithms}.  Basically, it is cleverly
-scheduling the jobs on the $P$ processors.
-
+Brent's algorithm basically says, given $P$ processors and an algorithm with work $W$ and span $S$,
+there exists a \textbf{scheduler} that assigns the jobs to the $P$ processors with time complexity
+$O((W/P) + S)$.  For the proof of Brent's theorem, we refer the reader to a Wikipedia page:
+\url{https://en.wikipedia.org/wiki/Analysis_of_parallel_algorithms}.
 
 
 \paragraph{Example: Matrix Multiplication}
@@ -60,6 +66,7 @@ number of processors, you can execute the algorithm with the time complexity as 
  $O(1)$ & $O(n^3)$ \\
  $O(n)$ & $O(n^2)$ \\
  $O(n^2)$ & $O(n)$ \\
+ $O(n^3 / (lg~n))$ & $O(lg~n)$ \\
  $O(n^3)$ & $O(lg~n)$ \\
  $O(\infty)$ & $O(lg~n)$
 \end{tabular}
@@ -67,7 +74,7 @@ number of processors, you can execute the algorithm with the time complexity as 
 
 
 
-\section{Systolic Array}
+\section{Example: Systolic Array}
 
 \paragraph{Example}
 
@@ -116,17 +123,20 @@ Systolic array is a way of realizing the matrix multiplication algorithm with $n
 $O(n)$ time complexity, by $(i)$ placing the $n^2$ processors in square ($n \times n$), and $(ii)$
 assigning the computation of $I(i,j)$, $A(i,j)$, and $O(i,j)$ to the $(i,j)$-th processor.  In other
 words, you may think of systolic array as the combination of $(i)$ the matrix multiplication
-algorithm and $(ii)$ a scheduling strategy for $n^2$ processors.  Until the midterm exam, we had
-mostly focused on the pure algorithm aspect like $(i)$; from now on, we will also focus on the
-resource aspect like $(ii)$.
+algorithm and $(ii)$ a scheduling strategy for $n^2$ processors.
 
-Notice that systolic array exhibits excellent spatial locality: the computation within a processor
-requires only those values in the same or adjacent processor.  Systolic array is designed so as to
-exploit this spatial locality.
+Then what's the difference between the systolic array and the general matrix multiplication
+algorithm with the Brent's scheduler?  Notice that systolic array exhibits excellent spatial
+locality: the computation within a processor requires only those values in the same or adjacent
+processor.  Systolic array is designed so as to exploit this spatial locality, which greatly
+improves the throughput in the real-world, resource-limited computers.  In contrast, Brent's theorem
+says nothing about locality.
 
 Systolic array is widely deployed in high-performance computer architecture.  For example, Google's
-TPU has a systolic array of ${256}^2$ processors (see \url{https://arxiv.org/pdf/1704.04760.pdf} for
+TPU has a systolic array of ${256}^2$ processors, which is able to multiply two matrices of size
+$256 \times 256$ within $256 \times 3$ cycles (see \url{https://arxiv.org/pdf/1704.04760.pdf} for
 more details).
+
 
 
 \end{document}
