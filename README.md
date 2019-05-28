@@ -139,6 +139,11 @@ For your information, the teaching staffs will do their best to detect cheating.
   student number.  Any emails failing to do so (e.g. emails without student number) will not be
   answered.
 
+- There is an **unofficial** [Mattermost
+  channel](https://cp.kaist.ac.kr/mm/signup_user_complete/?id=jbrjpkhjepn6dd4azno4i1brwo) for
+  instant messages.  The instructor may not answer your questions here.  Discussion among students
+  is strongly encouraged.
+
 - In the office hour, we should follow the following rules (courtesy of PLRG):
 
   + No debugging.
