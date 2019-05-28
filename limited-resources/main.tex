@@ -107,7 +107,7 @@ Here is the systolic array algorithm:
     \EndIf
     \State $I' = [(i,j) \mapsto (i=0)~?~X(k-j,j)~:~I(i-1,j)]$
     \State $A' = [(i,j) \mapsto ((j=0)~?~0~:~A(i,j-1)) + (W(i,j) \times I'(i,j)))]$
-    \State $O' = O[\forall i.~(k-n-i,i) \mapsto A(i,n-1)]$
+    \State $O' = O[\forall i.~(i,k-n-i) \mapsto A(i,n-1)]$
     \State $\Call{SystolicInner}{W,X,k+1,I',A',O'}$
     \EndProcedure
   \end{algorithmic}
