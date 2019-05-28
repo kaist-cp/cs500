@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,oneside,microtype,nokorean]{oblivoir}
+\documentclass[11pt,a4paper,oneside,microtype,chapter,nokorean]{oblivoir}
 \usepackage[margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -28,12 +28,221 @@
 \algtext*{EndSwitch}%
 \algtext*{EndCase}%
 
-
 \begin{document}
 
-\title{Lecture Note on Search Algorithms}
+\title{CS500 Lecture Note}
 \author{Jeehoon Kang}
 \maketitle
+
+
+\chapter{Recurrences}
+
+\section{Introduction}
+
+\paragraph{Study guide}
+
+I recommend you to study recurrences like this:
+
+\begin{itemize}
+\item Read the textbook's Section 11 (pages 87-98).
+\item Read \Cref{sec:examples} to see how proofs work.
+\item Solve the examples and exercises in the textbook's Sections 11.4, 11.5 (pages 91-98) on
+  yourselves.
+\end{itemize}
+
+
+\paragraph{Exam guide}
+
+Here are a few tips for the quizzes and exams.
+
+\begin{itemize}
+\item The most foundational way to solve a recurrence is by induction (what is called ``substitution
+  method'' in the textbook).  Even if someone is very pedantic, s/he should accept proofs by
+  induction as far as s/he believes in Mathematics.
+
+\item ``Tree method'' and ``brick method'' are lemmas that deal with all the difficulties of proof
+  by induction.  In the exams, you can freely use these methods as lemmas, except when the problem
+  specifically asks you to prove it by induction.
+
+\item Tree method: analyzing the recursion tree, and then deriving a closed-form solution.
+
+\item Brick method says:
+  \begin{itemize}
+  \item If a recursion tree is root-dominated, then the total work is asymptotically equivalent to
+    the work at the root.
+  \item If a recursion tree is leaf-dominated, then the total work is asymptotically equivalent to
+    the number of leaves.
+  \end{itemize}
+
+\item You can assume the grader already knows what ``recursion tree'' and ``level'' means, and
+  assume the root is at the level $0$ (unless specified otherwise).  But you should not assume the
+  grader is aware of \emph{e.g.} what $C(v)$ or $D(v)$ means for recursion trees.
+\end{itemize}
+
+
+\section{Examples}
+\label{sec:examples}
+
+
+\begin{example}[Balanced] Suppose $W(n) = 2W(n/2) + O(n)$.  Prove $W(n) = O(n~lg~n)$.
+\end{example}
+
+\begin{proof}
+  We prove using the tree method, \emph{i.e.} analyzing the recursion tree and deriving a
+  closed-form solution (Example 11.4).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 n + c_2.$
+  \item (Draw the recursion tree.)
+  \item We can deduce from the tree that for the level $i$, there are $2^i$ nodes and the cost of
+    each node is $c_1 (n (1/2)^i) + c_2$.  (To be pedantic, we can prove it by induction.)
+  \item Thus the cost of the level $i$ is $2^i \times (c_1 (n (1/2)^i) + c_2) = c_1 n + 2^i c_2$.
+
+  \item Since the recursion tree has $lg~n + 1$ levels, we have:
+    \begin{align*}
+      W(n)
+      = &~ \sum_{i=0}^{lg~n} (c_1 n + 2^i c_2) & \mbox{($i=0$ for the root, $i=lg~n$ for the
+                                                 leaves)} \\
+      \le &~ c_1 n (lg~n + 1) + 2^{lg~n + 1} c_2 \\
+      = &~ c_1 n (lg~n + 1) + 2 n c_2 \\
+      = &~ O(n~lg~n).
+    \end{align*}
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Root-dominated] Suppose $W(n) = 2W(n/2) + O(n^2)$.  Prove $W(n) = O(n^2)$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is root-dominated (Example 11.5).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 n^2 + c_2.$
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = c_1 n^2 + c_2$, and
+    $\sum_{u \in D(v)} C(u) = 2(c_1 (n/2)^2 + c_2) = 2 c_1 (n/2)^2 + 2 c_2$, where by $D(v)$ we mean
+    the set of children of $v$ in the recursion tree.
+
+    (Caution: we assume the grader already knows what ``recursion tree'' means, but you should
+    define $C(v)$ and $D(v)$ on yourselves.)
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{2 c_1 (n/2)^2 + 2 c_2}{c_1 n^2 + c_2} \\
+      = &~ \dfrac{1 + (4 c_2 / c_1) / n^2}{2 + (2 c_2 / c_1) / n^2} & \mbox{(by dividing by $c_1 n^2 / 2$)} \\
+      \le &~ 3/4. & \mbox{(if $(4 c_2 / c_1) / n^2 \le 1/2$)}
+    \end{align*}
+  \item So if $(4 c_2 / c_1) / n^2 \le 1/2$, or $\sqrt{8 c_2 / c_1} \le n$, then when walking down
+    the tree, the cost of a level in the recursion tree decreases more than a factor of $4/3$.
+  \item Thus the root dominates the cost, and $W(n) = O(C(n)) = O(c_1 n^2 + c_2) = O(n^2)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Leaf-dominated] Suppose $W(n) = 2W(n/2) + O(\sqrt{n})$.  Prove $W(n) = O(n)$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is leaf-dominated (Example 11.6).
+
+  \begin{itemize}
+  \item By definition, there exists $c_1,c_2$ such that $W(n) \le 2W(n/2) + c_1 \sqrt{n} + c_2.$
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = c_1 \sqrt{n} + c_2$, and
+    $\sum_{u \in D(v)} C(u) = 2(c_1 \sqrt{n/2} + c_2) = \sqrt{2} c_1 \sqrt{n} + 2 c_2$, where by
+    $D(v)$ we mean the set of children of $v$ in the recursion tree.
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{\sqrt{2} c_1 \sqrt{n} + 2 c_2}{c_1 \sqrt{n} + c_2} \\
+      = &~ \dfrac{\sqrt{2} + (2 c_2 / c_1) / \sqrt{n}}{1 + (c_2 / c_1) / \sqrt{n}} & \mbox{(by dividing by $c_1 \sqrt{n}$)} \\
+      \ge &~ \sqrt{2}.
+    \end{align*}
+  \item So when walking down the tree, the cost of a level in the recursion tree increases more than
+    a factor of $\sqrt{2}$.
+  \item Thus the leaves dominate the cost, and $W(n) = O(\mbox{the number of leaves}) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Induction] Suppose $W(n) = W(n/2) + O(n)$.  Prove $W(n) = O(n)$.
+\end{example}
+
+\begin{proof}
+  First of all, by definition, there exists $c_1,c_2$ such that $W(n) \le W(n/2) + c_1 n + c_2$ for
+  $n > 1$, and $W(1) = c_2$.  We prove $W(n) \le (2 c_1 + c_2) n + c_2$ by induction.
+
+  \begin{itemize}
+  \item Base case $n=1$: We have $W(n) = W(1) \le c_2 \le (2 c_1 + c_2) n + c_2$.
+
+  \item Inductive case for $n$: We have:
+
+    \begin{align*}
+      W(n)
+      \le &~ W(n/2) + c_1 n + c_2 & \mbox{(by assumption)} \\
+      \le &~ ((2 c_1 + c_2) (n/2) + c_2) + c_1 n + c_2 & \mbox{(by inductive hypothesis)} \\
+      = &~ c_1 n + (c_2 / 2) n + c_1 n + 2 c_2 \\
+      = &~ (2 c_1 + c_2)n + c_2 (2 - n/2) \\
+      \le &~ (2 c_1 + c_2)n + c_2. & \mbox{(since $n \ge 2$)}
+    \end{align*}
+
+  \item By induction, we have $W(n) \le (2 c_1 + c_2) n + c_2$ for all $n$.  Thus $W(n) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+\begin{example}[Root-dominated, advanced] Suppose $W(n) = W(\sqrt{n}) + W(n/2) + n$.  Prove
+  $W(n) = O(n)$.
+\end{example}
+
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is root-dominated (page 95).
+
+  \begin{itemize}
+  \item Let $C(v)$ be the cost of node $v$ in the \emph{recursion tree}.  If $v$ is a node of size
+    $n$, then $C(v) = n$, and $\sum_{u \in D(v)} C(u) = \sqrt{n} + (n/2)$, where by $D(v)$ we mean
+    the set of children of $v$ in the recursion tree.
+  \item We have:
+    \begin{align*}
+      \dfrac{\sum_{u \in D(v)} C(u)}{C(v)}
+      = &~ \dfrac{\sqrt{n} + (n/2)}{n} \\
+      = &~ \dfrac{1 + 2/\sqrt{n}}{2} & \mbox{(by dividing by $n/2$)} \\
+      \le &~ 3/4. & \mbox{(if $2/\sqrt{n} \le 1/2$)}
+    \end{align*}
+  \item So if $2/\sqrt{n} \le 1/2$, or $16 \le n$, then when walking down the tree, the cost of a
+    level in the recursion tree decreases more than a factor of $4/3$.
+  \item Thus the root dominates the cost, and $W(n) = O(n)$.
+  \end{itemize}
+\end{proof}
+
+
+\begin{example}[Leaf-dominated, advanced] Suppose $W(n) = W(n/2) + W(n/3) + 1$.  Prove
+  $W(n) = O(n^{0.788})$.
+\end{example}
+
+\begin{proof}
+  Prove by exploiting the fact that $W(n)$ is leaf-dominated (page 96).
+
+  \begin{itemize}
+  \item The recursion three is clearly leaf-dominated (exercise for the readers!).  Thus
+    $W(n) = O(\mbox{the number of leaves})$.  Let's count it.
+
+  \item Let $L(n)$ be the number of leaves when the size of the root is $n$.  Then we have
+    $L(n) = L(n/2) + L(n/3)$.  Now it's clearly $L(n) = O(n)$, but we want to find a tighter bound.
+
+  \item (Scribble: Let's guess that $L(n) = n^\beta$ for some $\beta$.  Then
+    $n^\beta = (n/2)^\beta + (n/3)^\beta = n^\beta ((1/2)^\beta + (1/3)^\beta)$, and thus
+    $1 = (1/2)^\beta + (1/3)^\beta$.  For this equation, there exists a real solution
+    $\beta \le 0.788$.)
+
+  \item As if we didn't scribble anything, just use the magic number $0.788$ and prove
+    $W(n) = O(n^{0.788})$ by induction.
+  \end{itemize}
+\end{proof}
+
+
+\chapter{Search Algorithms}
 
 \section{Breadth-First Search (BFS)}
 
@@ -422,6 +631,128 @@ From the above lemma follows the correctness of the algorithm:
 \begin{theorem}[Correctness of \textsc{Floyd-Warshall}] For any $G$, $i$, and $j$,
   $\textsc{Floyd-Warshall}(G)_{i,j}$ is the shortest path weight from $v_i$ to $v_j$.
 \end{theorem}
+
+
+
+
+\chapter{On Limited Resources}
+
+Until the midterm exam, we had mostly focused on the pure algorithms.  From now on, we will also
+focus on the limited resources such as processors, cache, memory, etc.
+
+
+\section{Brent's Theorem}
+
+Let's first consider processors.  Fortunately, parallel algorithms enjoy the following property:
+
+\begin{theorem}[Brent]
+  Let $W$ and $S$ be the work and span of an algorithm.  Given $P$ processors, it is possible to
+  execute the algorithm with the time complexity $T = O \Big( \dfrac{W}{P} + S \Big)$.
+\end{theorem}
+
+Brent's algorithm basically says, given $P$ processors and an algorithm with work $W$ and span $S$,
+there exists a \textbf{scheduler} that assigns the jobs to the $P$ processors with time complexity
+$O((W/P) + S)$.  For the proof of Brent's theorem, we refer the reader to a Wikipedia page:
+\url{https://en.wikipedia.org/wiki/Analysis_of_parallel_algorithms}.
+
+
+\paragraph{Example: Matrix Multiplication}
+
+Multiplying two matrices of size $n \times n$ costs $O(n^3)$ work and $O(lg~n)$ span.  Given varying
+number of processors, you can execute the algorithm with the time complexity as follows:
+
+\begin{center}
+\begin{tabular}{ c | c }
+ \# of processors & time complexity \\
+  \hline
+ $O(1)$ & $O(n^3)$ \\
+ $O(n)$ & $O(n^2)$ \\
+ $O(n^2)$ & $O(n)$ \\
+ $O(n^3 / (lg~n))$ & $O(lg~n)$ \\
+ $O(n^3)$ & $O(lg~n)$ \\
+ $O(\infty)$ & $O(lg~n)$
+\end{tabular}
+\end{center}
+
+
+
+\section{Example: Systolic Array}
+
+\paragraph{Example}
+
+These videos are excellent examples of systolic array:
+\url{https://www.youtube.com/watch?v=nzVyQzv8FG8} \url{https://www.youtube.com/watch?v=eK5fjuEFJu0}
+Watching these videos, you will quite get the idea of systolic array.
+
+FYI, ``systolic'' means ``relating to the phase of the heartbeat when the heart muscle contracts and
+pumps blood from the chambers into the arteries.''
+(\url{https://en.oxforddictionaries.com/definition/systolic}).
+
+
+\paragraph{Algorithm}
+
+Here is the systolic array algorithm:
+
+\begin{algorithm}
+  \caption{Systolic Array}\label{systolic}
+  \begin{algorithmic}[1]
+    \Procedure{Systolic}{$W,X$} \Comment{Systolic array algorithm}
+    \State $I_0 = [(i,j) \mapsto 0]$ \Comment{Systolic input from $X$}
+    \State $A_0 = [(i,j) \mapsto 0]$ \Comment{Accumulator}
+    \State $O_0 = [(i,j) \mapsto 0]$ \Comment{Output ($W \times X$)}
+    \State $\Call{SystolicInner}{W,X,0,I_0,A_0,O_0}$
+    \EndProcedure
+    \Statex
+    \Procedure{SystolicInner}{$W,X,k,I,A,O$} \Comment{A helper function}
+    \If{$k = 3n-1$}
+    \State \textbf{return} $O$
+    \EndIf
+    \State $I' = [(i,j) \mapsto (i=0)~?~X(k-j,j)~:~I(i-1,j)]$
+    \State $A' = [(i,j) \mapsto ((j=0)~?~0~:~A(i,j-1)) + (W(i,j) \times I'(i,j)))]$
+    \State $O' = O[\forall i.~(i,k-n-i) \mapsto A(i,n-1)]$
+    \State $\Call{SystolicInner}{W,X,k+1,I',A',O'}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+An invocation to \textsc{SystolicInner} costs $O(n^2)$ work and $O(1)$ span.  Thus the total cost of
+\textsc{Systolic} is $O(n^3)$ work and $O(n)$ span.
+
+
+\paragraph{Discussion}
+
+Systolic array is a way of realizing the matrix multiplication algorithm with $n^2$ processors and
+$O(n)$ time complexity, by $(i)$ placing the $n^2$ processors in square ($n \times n$), and $(ii)$
+assigning the computation of $I(i,j)$, $A(i,j)$, and $O(i,j)$ to the $(i,j)$-th processor.  In other
+words, you may think of systolic array as the combination of $(i)$ the matrix multiplication
+algorithm and $(ii)$ a scheduling strategy for $n^2$ processors.
+
+Then what's the difference between the systolic array and the general matrix multiplication
+algorithm with the Brent's scheduler?  Notice that systolic array exhibits excellent spatial
+locality: the computation within a processor requires only those values in the same or adjacent
+processor.  Systolic array is designed so as to exploit this spatial locality, which greatly
+improves the throughput in the real-world, resource-limited computers.  In contrast, Brent's theorem
+says nothing about locality.
+
+Systolic array is widely deployed in high-performance computer architecture.  For example, Google's
+TPU has a systolic array of ${256}^2$ processors, which is able to multiply two matrices of size
+$256 \times 256$ within $256 \times 3$ cycles (see \url{https://arxiv.org/pdf/1704.04760.pdf} for
+more details).
+
+
+\section{Odd-Even Merge Sort}
+
+TODO
+
+
+\section{Bitonic Sort}
+
+TODO
+
+
+\section{Dynamic Scheduling}
+
+TODO
 
 
 
