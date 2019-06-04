@@ -742,17 +742,125 @@ more details).
 
 \section{Odd-Even Merge Sort}
 
-TODO
+Odd-even merge sort is a parallel merge sort algorithm that uses the ``odd-even'' merge algorithm.
+Here is the odd-even merge algorithm:
+
+\begin{algorithm}
+  \caption{Odd-Even Merge}\label{odd-even-merge}
+  \begin{algorithmic}[1]
+    \Procedure{Merge}{$A, B$} \Comment{$A,B$: sequences of length $2n$}
+    \State $(A_o, A_e) = \Call{Split}{A}$ \Comment{$A_o/A_e$ are sequences of values of odd/even indices}
+    \State $(B_o, B_e) = \Call{Split}{B}$ \Comment{$B_o/B_e$ are sequences of values of odd/even indices}
+    \State $C_o = \Call{Merge}{A_o,B_o}$
+    \State $C_e = \Call{Merge}{A_e,B_e}$
+    \State $D[i] = \textrm{min}(C_o[i+1],C_e[i])$ for each $i$
+    \State $E[i] = \textrm{max}(C_o[i+1],C_e[i])$ for each $i$
+    \State $\langle C_o[1], D[1], E[1], D[2], E[2], \cdots, D[2n-1], E[2n-1], C_e[2n] \rangle$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}[Correctness of \textsc{Merge}] For any sorted sequences $A$ and $B$ of length $2n$,
+  \textsc{Merge}($A$,$B$) is the sorted merge of $A$ and $B$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+  Obviously \textsc{Merge}($A$,$B$) has the same values as the union of $A$ and $B$.  Let's prove
+  that \textsc{Merge}($A$,$B$) is sorted.  We prove it by induction.  As inductive hypothesis, we
+  have $C_o$ and $C_e$ are sorted.
+
+  \begin{itemize}
+  \item In the result, it is easy to show that the first value $C_o[1]$ and the last value $C_e[2n]$
+    are the minimum and the maximum, respectively.  So let's prove that the other values are sorted.
+
+  \item By the definition of $D$ and $E$, for all $i$, we have $D[i] \le E[i]$.
+
+  \item Thus it remains to prove that for all $i$, $E[i] \le D[i+1]$, or in other words,
+    $\textrm{max}(C_o[i+1],C_e[i]) \le \textrm{min}(C_o[i+2],C_e[i+1])$.  Equivalently, we need to
+    prove that for all $i$, we have $(i)$ $C_o[i+1] \le C_o[i+2]$, $(ii)$ $C_o[i+1] \le C_e[i+1]$,
+    $(iii)$ $C_e[i] \le C_o[i+2]$, and $(iv)$ $C_e[i] \le C_e[i+1]$.  Out of the four, $(i)$,
+    $(ii)$, and $(iv)$ are trivial to prove.  Now let's prove $(iii)$.
+
+  \item We need a lemma: if $C$ is a (sorted) merge of $A$ and $B$, then for all $i$, we have
+    $C_i = \textrm{min}_j (\textrm{max}(A_j,B_{i-j}))$.  The proof of this lemma is left as
+    exercise.
+
+  \item Finally, let's prove that $(iii)$.  for all $i$, we have:
+    \begin{align*}
+      C_o[i+2]
+      =&~ \textrm{max}(A_o[j], B_o[i+2-j]) & \mbox{(for some $j$, by lemma)} \\
+      \ge&~ \textrm{max}(A_e[j-1], B_e[i+1-j]) & \mbox{(by def. of $A_e$,$A_o$,$B_e$,and $B_o$)} \\
+      \ge&~ C_e[i]~. & \mbox{(by lemma)}
+    \end{align*}
+  \end{itemize}
+\end{proof}
+
+
 
 
 \section{Bitonic Sort}
 
-TODO
+\paragraph{Bitonic} A sequence is \emph{bitonic} if it is either $(i)$ increasing and then
+decreasing, or $(ii)$ decreasing and then increasing.  (We assume that increasing or decreasing
+sequences are also bitonic as a degenerate case.)  A sequence is \emph{rotationally bitonic} if it
+is a rotation of a bitonic sequence.
+
+
+\paragraph{Exchange} Let $A$ be a sequence of length $2n$.  The exchanges of $A$ is defined as
+follows:
+\begin{align*}
+  \textrm{xchgL}(A) = \langle \textrm{min}(A[1],A[n+1]), \textrm{min}(A[2],A[n+2]), \cdots, \textrm{min}(A[n],A[2n]) \rangle~, \\
+  \textrm{xchgR}(A) = \langle \textrm{max}(A[1],A[n+1]), \textrm{max}(A[2],A[n+2]), \cdots, \textrm{max}(A[n],A[2n]) \rangle~.
+\end{align*}
+
+\begin{lemma} Let $A$ be a sequence of length $2n$.  If $A$ is rotationally bitonic, then so are
+  $\textrm{xchgL}(A)$ and $\textrm{xchgR}(A)$.
+\end{lemma}
+\begin{proof}[Proof Sketch]
+  We are proving only the key lemma in this lecture note.
+
+  \begin{itemize}
+  \item Lemma: if $A'$ is a rotation of $A$, then $\textrm{xchgL}(A')$ and $\textrm{xchgR}(A')$ are
+    rotations of $\textrm{xchgL}(A)$ and $\textrm{xchgR}(A)$, respectively.
+
+  \item Let $A'$ be a rotation of $A$ that is bitonic.  By the lemma, it suffices to prove that
+    $\textrm{xchgL}(A')$ and $\textrm{xchgR}(A')$ are rotationally bitonic.
+
+  \item Without loss of generality, assume that $A'$ is increasing and then decreasing.  Let $R$ be
+    the biggest $n$ values in $A'$.  Because $A'$ is increasing and then decreasing, $R$ form an
+    interval.
+
+  \item Let $A''$ be a rotation of $A'$ for which $A''[(n+1)..2n]$ is $R$.  By the lemma, it
+    suffices to prove that $\textrm{xchgL}(A'')$ and $\textrm{xchgR}(A'')$ are rotationally bitonic.
+
+  \item Since $R$ are the biggest $n$ values, we have $\textrm{xchgL}(A'') = A''[1..n]$ and
+    $\textrm{xchgR}(A'') = A''[(n+1)..2n]$.  It is easy to see that $\textrm{xchgL}(A'')$ is
+    decreasing (after $R$ in $A'$) and then increasing (before $R$ in $A'$), and
+    $\textrm{xchgR}(A'') = R$ is increasing and then decreasing.  So both $\textrm{xchgL}(A'')$ and
+    $\textrm{xchgR}(A'')$ are bitonic, and thus rotationally bitonic.
+  \end{itemize}
+\end{proof}
+
 
 
 \section{Dynamic Scheduling}
 
-TODO
+Systolic array, odd-even merge sort, and bitonic sort are scheduling their jobs \emph{statically}:
+it is statically determined at compile time that which jobs are executed in which CPU core (or
+machine).  It was possible because the computational structure of those algorithms are static.  But
+it is not always the case: in fact, most of the algorithms have dynamic computational structure with
+varying job dependencies determined by the input.  In this case, it would be better to use
+\emph{dynamic scheduler} that distributes jobs across multiple cores.
+
+A naive attempt to dynamic scheduling is putting all jobs in a globally shared queue, and getting a
+job for each available core.  But such a queue may suffer from extremely high contention, because
+all cores should concurrently access the same queue to get a job.  Such high contention translates
+to poor scalability and performance.
+
+\emph{Job-stealing} dynamic schedulers $(i)$ maintain a queue for each core, $(ii)$ let a core get
+and put jobs to its own queue, and $(iii)$ let a core steal jobs from the job queue of the others
+only if its own queue is empty.  The benefit is lower contention thanks to the division of jobs into
+multiple queues.  For the implementation of such job-stealing queue, it is wise to optimize for the
+performance of the owner's operations rather than that of the stealers' operations.
 
 
 
