@@ -699,7 +699,7 @@ Here is the systolic array algorithm:
     \Procedure{Systolic}{$W,X$} \Comment{Systolic array algorithm}
     \State $I_0 = [(i,j) \mapsto 0]$ \Comment{Systolic input from $X$}
     \State $A_0 = [(i,j) \mapsto 0]$ \Comment{Accumulator}
-    \State $O_0 = [(i,j) \mapsto 0]$ \Comment{Output ($W \times X$)}
+    \State $O_0 = [(i,j) \mapsto 0]$ \Comment{Output ($W \times X^T$)}
     \State $\Call{SystolicInner}{W,X,0,I_0,A_0,O_0}$
     \EndProcedure
     \Statex
